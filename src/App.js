@@ -7,6 +7,7 @@ import Speech from './Speech'
 import Canvas from './Canvas'
 
 import Scene from './Scene'
+import Aframe from './Aframe'
 
 const App = () => {
   window.app = this
@@ -14,7 +15,7 @@ const App = () => {
 
   return (
     <div>
-      <Scene />
+      <Aframe />
     </div>
   )
 }
