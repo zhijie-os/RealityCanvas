@@ -15,11 +15,11 @@ class Parameterize {
     }
   }
 
-  mouseDown(e) {
-    console.log(e)
+  mouseDown(pos) {
+    console.log(pos)
     this.switchDraggable(false)
     this.isPaint = true
-    let pos = this.stage.getPointerPosition()
+    // let pos = this.stage.getPointerPosition()
     this.group = new Konva.Group({ x: 0, y: 0 })
     this.group.constraints = []
     this.line = new Konva.Line({
@@ -43,25 +43,25 @@ class Parameterize {
     this.group.add(this.line)
     this.group.add(this.label)
     this.lineLayer.add(this.group)
-    this.addConstraint(this.group, e, 'start')
+    this.addConstraint(this.group, pos, 'start')
   }
 
-  mouseMove(e) {
+  mouseMove(pos) {
     if (!this.isPaint) return
-    e.evt.preventDefault()
-    const pos = this.stage.getPointerPosition()
+    // e.evt.preventDefault()
+    // const pos = this.stage.getPointerPosition()
     this.update(this.group, pos)
   }
 
-  mouseUp(e) {
+  mouseUp(pos) {
     if (!this.isPaint) return
     this.isPaint = false
     this.switchDraggable(true)
     Canvas.event.mode = null
-    this.addConstraint(this.group, e, 'end')
+    this.addConstraint(this.group, pos, 'end')
   }
 
-  addConstraint(group, e, type) {
+  addConstraint(group, pos, type) {
     if (type === 'end') {
       let line = group.children[0]
       let points = line.getPoints()
@@ -88,6 +88,7 @@ class Parameterize {
       return
     }
 
+    /*
     let node = e.target
     if (node !== this.stage) {
       group.constraints.push({
@@ -96,6 +97,7 @@ class Parameterize {
         align: 'center'
       })
     }
+    */
   }
 
   updateAll() {

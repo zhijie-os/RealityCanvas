@@ -51,6 +51,7 @@ class Aframe extends Component {
         this.el.addEventListener('mouseup', (event) => {
           drawing = false
           this.first = true
+          this.event.mouseUp()
         })
       },
 
@@ -84,7 +85,7 @@ class Aframe extends Component {
       <div>
         <a-scene cursor="rayOrigin: mouse">
           <a-camera look-controls="mouseEnabled: false; touchEnabled: false"></a-camera>
-          <a-plane id="plane" drawable position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
+          <a-plane id="plane" drawable position="0 0 -4" rotation="0 0 0" width="4" height="4" color="#7BC8A4" shadow></a-plane>
         </a-scene>
         <Canvas />
       </div>
