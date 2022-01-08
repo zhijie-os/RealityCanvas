@@ -13,6 +13,7 @@ class Event {
   }
 
   mouseDown(e) {
+    /*
     if (this.mode === 'parameterize') {
       this.parameterize.mouseDown(e)
       return
@@ -21,20 +22,30 @@ class Event {
       this.graph.mouseDown(e)
       return
     }
-
     if (e.target !== this.stage) return
     this.isPaint = true
     let pos = this.stage.getPointerPosition()
     this.lastLine = new Konva.Line({
-      stroke: '#000',
+      stroke: 'red',
       strokeWidth: 5,
       lineCap: 'round',
       points: [pos.x, pos.y, pos.x, pos.y]
     })
     this.layer.add(this.lastLine)
+    */
+
+    this.isPaint = true
+    this.lastLine = new Konva.Line({
+      stroke: 'red',
+      strokeWidth: 5,
+      lineCap: 'round',
+      points: [e.x, e.y, e.x, e.y]
+    })
+    this.layer.add(this.lastLine)
   }
 
   mouseMove(e) {
+    /*
     if (this.mode === 'parameterize') {
       this.parameterize.mouseMove(e)
       return
@@ -43,15 +54,19 @@ class Event {
       this.graph.mouseMove(e)
       return
     }
-
     if (!this.isPaint) return
     e.evt.preventDefault()
     const pos = this.stage.getPointerPosition()
     let newPoints = this.lastLine.points().concat([pos.x, pos.y])
     this.lastLine.points(newPoints)
+    */
+
+    let newPoints = this.lastLine.points().concat([e.x, e.y])
+    this.lastLine.points(newPoints)
   }
 
   mouseUp(e) {
+    /*
     if (this.mode === 'parameterize') {
       this.parameterize.mouseUp(e)
       return
@@ -60,11 +75,12 @@ class Event {
       this.graph.mouseUp(e)
       return
     }
+    */
 
     if (!this.isPaint) return
     this.isPaint = false
     Canvas.setState({ lastLine: this.lastLine })
-    Canvas.morph.animate()
+    // Canvas.morph.animate()
   }
 
   dragMove(e) {

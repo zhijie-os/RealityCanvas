@@ -3,6 +3,9 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from '@three-ts/orbit-controls'
 
+import Canvas from './Canvas'
+import Event from './Event'
+
 class Scene extends Component {
   constructor(props) {
     super(props)
@@ -32,16 +35,16 @@ class Scene extends Component {
   }
 
   componentDidMount() {
-    const width = this.mount.clientWidth
-    const height = this.mount.clientHeight
+    this.width = this.mount.clientWidth
+    this.height = this.mount.clientHeight
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+    const camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     camera.position.set(0, -50, 5) // ryo
     camera.up.set(0, 0, 1)
 
     renderer.setClearColor('#eee')
-    renderer.setSize(width, height)
+    renderer.setSize(this.width, this.height)
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enabled = true
@@ -67,25 +70,88 @@ class Scene extends Component {
     var cube = new THREE.Mesh( geometry, material );
     this.scene.add(cube)
 
-    var size = 256
-    var canvas = document.getElementById('canvas2')
-    var ctx = canvas.getContext('2d')
-
+    var size = 400
+    var canvas = document.getElementById('konva-1')
+    // var ctx = canvas.getContext('2d')
     canvas.width = canvas.height = size;
 
     this.texture = new THREE.Texture(canvas)
     geometry = new THREE.PlaneGeometry( 30, 30 )
     material = new THREE.MeshBasicMaterial({ map: this.texture, side: THREE.DoubleSide })
     // material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-    const plane = new THREE.Mesh( geometry, material );
-    this.scene.add( plane );
+    this.plane = new THREE.Mesh( geometry, material );
+    this.scene.add( this.plane )
+
+    this.event = new Event()
+    this.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
+    this.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+    this.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
 
     this.renderScene()
     this.start()
   }
 
+  onMouseDown(event) {
+    console.log('mousedown')
+    this.drawing = true
+    this.getIntersection(event)
+
+    if (this.drawing && this.intersect) {
+      this.controls.enabled = false
+      // event.target = this.event.stage
+      let mouse = {
+        x: 400 * this.intersect.uv.x,
+        y: 400 * (1- this.intersect.uv.y)
+      }
+      this.event.mouseDown(mouse)
+      let uv = this.intersect.uv
+      console.log(uv)
+    }
+
+  }
+
+  onMouseMove(event) {
+    console.log('mousemove')
+    this.getIntersection(event)
+    if (this.drawing && this.intersect) {
+      this.controls.enabled = false
+      // event.target = this.event.stage
+      let mouse = {
+        x: 400 * this.intersect.uv.x,
+        y: 400 * (1- this.intersect.uv.y)
+      }
+      this.event.mouseMove(mouse)
+      let uv = this.intersect.uv
+      console.log(uv)
+    }
+  }
+
+  onMouseUp(event) {
+    console.log('mouseup')
+    this.drawing = false
+    this.controls.enabled = true
+    this.event.mouseUp(event)
+  }
+
+  getIntersection(event) {
+    this.raycaster = new THREE.Raycaster()
+    this.mouse = new THREE.Vector2()
+
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+    this.raycaster.setFromCamera(this.mouse, this.camera)
+
+    this.intersects = new THREE.Vector3()
+    this.intersects = this.raycaster.intersectObjects([this.plane])
+    if (this.intersects.length > 0) {
+      this.intersect = this.intersects[0]
+    } else {
+      this.intersect = null
+    }
+  }
+
   changeCanvas() {
-    var canvas = document.getElementById('canvas2')
+    var canvas = document.getElementById('konva-2')
     var ctx = canvas.getContext('2d')
     ctx.font = '20pt Arial';
     ctx.fillStyle = 'red';
@@ -115,8 +181,15 @@ class Scene extends Component {
     this.renderScene()
     this.frameId = window.requestAnimationFrame(this.animate.bind(this))
     // Move.move()
+
+    // var canvas = document.getElementById('konva-2')
+    // this.texture = new THREE.Texture(canvas)
+    // let geometry = new THREE.PlaneGeometry( 30, 30 )
+    // let material.map = this.texture
+    // material.needsUpdate = true
+    // this.plane = new THREE.Mesh( geometry, material );
     this.texture.needsUpdate = true;
-    this.changeCanvas()
+    // this.changeCanvas()
   }
 
   stop() {
@@ -128,9 +201,10 @@ class Scene extends Component {
       <div>
         <div
           id="canvas"
-          style={{ width: this.width, height: this.height }}
+          // style={{ width: this.width, height: this.height }}
           ref={(mount) => { this.mount = mount }}
         />
+        <Canvas />
         <canvas id="canvas2"></canvas>
       </div>
     )

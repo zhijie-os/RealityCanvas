@@ -66,7 +66,7 @@ class Morph {
               x: 0,
               y: 0,
               data: d,
-              stroke: '#000',
+              stroke: 'red',
               strokeWidth: 5,
             })
             this.g.add(p)
@@ -82,7 +82,7 @@ class Morph {
           x: this.ox,
           y: this.oy,
           data: this.d3,
-          stroke: '#000',
+          stroke: 'red',
           strokeWidth: 5,
           draggable: true,
         })
