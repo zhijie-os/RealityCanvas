@@ -1,10 +1,3 @@
 # Draco AR
 
-```
-node server.js
-```
-
-
-```
-npm run start
-```
+Run `npm install` then `npm run start`

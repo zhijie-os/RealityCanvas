@@ -4,8 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "webpack --color --progress --watch --mode development",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run bundle && npm-run-all --parallel webpack serve",
+    "serve": "live-server",
+    "bundle": "webpack --config webpack.config.js",
+    "webpack": "webpack --config webpack.config.js --watch"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,6 @@
   "homepage": "https://github.com/ryosuzuki/snap-demo#readme",
   "dependencies": {
     "d3": "^7.1.1",
-    "express": "^4.17.1",
     "konva": "^8.2.3",
     "matter-js": "^0.17.1",
     "pasition": "^1.0.3",
@@ -38,6 +39,8 @@
     "@babel/preset-react": "^7.16.0",
     "babel-loader": "^8.2.3",
     "jquery": "^3.6.0",
+    "live-server": "^1.2.1",
+    "npm-run-all": "^4.1.5",
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1"
   }
