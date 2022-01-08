@@ -8,27 +8,6 @@ class Aframe extends Component {
     super(props)
     window.Scene = this
     this.state = {}
-
-    this.max = 60
-    this.type = 'horizontal'
-    this.graph = 'dots'
-
-    this.targets = {}
-
-    this.width = 1000
-    this.height = 800
-
-    // this.width = 700
-    // this.height = 600
-
-    this.raycaster = new THREE.Raycaster()
-    this.mouse2D = new THREE.Vector3(0, 10000, 0.5)
-    this.radius = 1600
-    this.theta = 90
-    this.phi = 60
-    this.onMouseDownPosition = new THREE.Vector2()
-    this.onMouseDownPhi = 60
-    this.onMouseDownTheta = 45
   }
 
   componentDidMount() {
