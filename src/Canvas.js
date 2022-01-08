@@ -43,8 +43,8 @@ class Canvas extends Component {
 
     this.stage = new Konva.Stage({
       container: 'konva',
-      width: 400,
-      height: 400
+      width: 256,
+      height: 256
     })
     this.layer = new Konva.Layer()
     this.layer.getCanvas()._canvas.id = 'konva-1'
