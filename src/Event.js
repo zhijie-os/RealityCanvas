@@ -77,7 +77,6 @@ class Event {
 
     if (!this.isPaint) return
     this.isPaint = false
-    console.log('hoge')
     Canvas.setState({ lastLine: this.lastLine })
     Canvas.morph.animate()
   }

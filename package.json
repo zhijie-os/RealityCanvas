@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ryosuzuki/snap-demo#readme",
   "dependencies": {
+    "@ar-js-org/ar.js": "^3.3.3-es6-beta-02",
     "@three-ts/orbit-controls": "^1.4.7",
     "d3": "^7.1.1",
     "konva": "^8.2.3",
