@@ -19,13 +19,15 @@ class Aframe extends Component {
 
         this.event = new Event()
 
-        let size = 256
+        let size = 1024
         let canvas = document.getElementById('konva-1')
         canvas.width = canvas.height = size
         let texture = new THREE.Texture(canvas)
         console.log(texture)
         let material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
         mesh.material = material
+        window.mesh = mesh
+        mesh.material.transparent = true
         this.mesh = mesh
 
         this.camera = document.getElementById('camera')
@@ -50,6 +52,7 @@ class Aframe extends Component {
       fingerUp(event) {
         this.internalState.dragging = false
         this.internalState.initDrawing = true
+        this.event.mouseUp()
       },
       tick: function() {
         this.mesh.material.map.needsUpdate = true
@@ -67,8 +70,8 @@ class Aframe extends Component {
             this.internalState.distance = intersect.distance
             let point = intersect.point
             let mouse = {
-              x: 256 * intersect.uv.x,
-              y: 256 * (1- intersect.uv.y)
+              x: 1024 * intersect.uv.x,
+              y: 1024 * (1- intersect.uv.y)
             }
             console.log(mouse)
             if (this.internalState.initDrawing) {

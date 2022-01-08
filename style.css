@@ -5,7 +5,6 @@
 }
 
 
-/*
 #parameterize-button {
   z-index: 2000;
   position: fixed;
@@ -29,11 +28,6 @@
   top: 0;
   width: 100%;
   height: 100%;
-}
-
-#workarea {
-  width: 100px;
-  height: 100px;
 }
 
 #canvasBackground > rect {
@@ -90,4 +84,3 @@ body {
   width: 100%;
   height: 15%;
 }
-*/
