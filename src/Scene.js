@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 
-import * as THREE from 'three'
-import { OrbitControls } from '@three-ts/orbit-controls'
+// import * as THREE from 'three'
+// import { OrbitControls } from '@three-ts/orbit-controls'
+// import { ArToolkitProfile, ArToolkitSource, ArToolkitContext, ArMarkerControls} from 'arjs/three.js/build/ar-threex.js'
+
 
 import Canvas from './Canvas'
 import Event from './Event'
@@ -39,21 +41,30 @@ class Scene extends Component {
     this.height = this.mount.clientHeight
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.1, 1000)
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
-    camera.position.set(0, -50, 5) // ryo
-    camera.up.set(0, 0, 1)
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    camera.position.set(0, 0, 50) // ryo
+    // camera.up.set(0, 0, 1)
 
-    renderer.setClearColor('#eee')
-    renderer.setSize(this.width, this.height)
+    // renderer.setClearColor('#eee')
+    // renderer.setSize(this.width, this.height)
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setClearColor(new THREE.Color(), 0)
+    renderer.setSize(640, 480)
+    renderer.domElement.style.position = 'absolute'
+    renderer.domElement.style.top = '0px'
+    renderer.domElement.style.left = '0px'
 
+    /*
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enabled = true
     controls.maxDistance = 1500
     controls.minDistance = 0
+    */
 
     this.scene = scene
     this.camera = camera
-    this.controls = controls
+    // this.controls = controls
     this.renderer = renderer
 
     this.mount.appendChild(this.renderer.domElement)
@@ -65,21 +76,23 @@ class Scene extends Component {
     // Grid.addGrid() ryo
     // Robot.addRobots()
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
-    var cube = new THREE.Mesh( geometry, material );
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 )
+    var material = new THREE.MeshBasicMaterial( { color: "#433F81" } )
+    var cube = new THREE.Mesh( geometry, material )
+    cube.position.y = 1.0
     this.scene.add(cube)
 
     var size = 400
     var canvas = document.getElementById('konva-1')
     // var ctx = canvas.getContext('2d')
-    canvas.width = canvas.height = size;
+    canvas.width = canvas.height = size
 
     this.texture = new THREE.Texture(canvas)
-    geometry = new THREE.PlaneGeometry( 30, 30 )
+    geometry = new THREE.PlaneGeometry( 3, 3 )
     material = new THREE.MeshBasicMaterial({ map: this.texture, side: THREE.DoubleSide })
-    // material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-    this.plane = new THREE.Mesh( geometry, material );
+    // material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} )
+    this.plane = new THREE.Mesh( geometry, material )
+    this.plane.position.y = 1.0
     this.scene.add( this.plane )
 
     this.event = new Event()
@@ -87,8 +100,48 @@ class Scene extends Component {
     this.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
     this.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
 
+
+    this.arToolkitContext = new THREEx.ArToolkitContext({
+      cameraParametersUrl: 'camera_para.dat',
+      detectionMode: 'mono'
+    })
+
+    this.arToolkitContext.init(() => {
+      this.camera.projectionMatrix.copy(this.arToolkitContext.getProjectionMatrix())
+    })
+
+    this.arToolkitSource = new THREEx.ArToolkitSource({
+      sourceType: 'webcam'
+    })
+
+    function onResize() {
+      console.log(this.arToolkitSource)
+      this.arToolkitSource.onResizeElement()
+      this.arToolkitSource.copyElementSizeTo(this.renderer.domElement)
+      if (this.arToolkitContext.arController !== null) {
+        this.arToolkitSource.copyElementSizeTo(this.arToolkitContext.arController.canvas)
+      }
+    }
+
+    this.renderer.domElement.addEventListener('resize', () => {
+      onResize.bind(this)()
+    })
+
+    this.arToolkitSource.init(() => {
+      setTimeout(() => {
+        onResize.bind(this)()
+      }, 2000)
+    })
+
+    this.arMarkerControls = new THREEx.ArMarkerControls(this.arToolkitContext, this.camera, {
+      type: 'pattern',
+      patternUrl: 'patt.hiro',
+      changeMatrixMode: 'cameraTransformMatrix'
+    })
+
     this.renderScene()
     this.start()
+
   }
 
   onMouseDown(event) {
@@ -97,7 +150,7 @@ class Scene extends Component {
     this.getIntersection(event)
 
     if (this.drawing && this.intersect) {
-      this.controls.enabled = false
+      // this.controls.enabled = false
       // event.target = this.event.stage
       let mouse = {
         x: 400 * this.intersect.uv.x,
@@ -114,7 +167,7 @@ class Scene extends Component {
     console.log('mousemove')
     this.getIntersection(event)
     if (this.drawing && this.intersect) {
-      this.controls.enabled = false
+      // this.controls.enabled = false
       // event.target = this.event.stage
       let mouse = {
         x: 400 * this.intersect.uv.x,
@@ -129,7 +182,7 @@ class Scene extends Component {
   onMouseUp(event) {
     console.log('mouseup')
     this.drawing = false
-    this.controls.enabled = true
+    // this.controls.enabled = true
     this.event.mouseUp(event)
   }
 
@@ -139,6 +192,8 @@ class Scene extends Component {
 
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1
+    // this.mouse.x = (event.clientX / 640) * 2 - 1
+    // this.mouse.y = - (event.clientY / 480) * 2 + 1
     this.raycaster.setFromCamera(this.mouse, this.camera)
 
     this.intersects = new THREE.Vector3()
@@ -150,22 +205,8 @@ class Scene extends Component {
     }
   }
 
-  changeCanvas() {
-    var canvas = document.getElementById('konva-2')
-    var ctx = canvas.getContext('2d')
-    ctx.font = '20pt Arial';
-    ctx.fillStyle = 'red';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'white';
-    ctx.fillRect(10, 10, canvas.width - 20, canvas.height - 20);
-    ctx.fillStyle = 'black';
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(new Date().getTime(), canvas.width / 2, canvas.height / 2);
-  }
-
   renderScene() {
-    let target = new THREE.Vector3(0, 10, 0)
+    let target = new THREE.Vector3(0, 0, 0)
     this.camera.lookAt(target)
     this.renderer.render(this.scene, this.camera)
   }
@@ -177,19 +218,17 @@ class Scene extends Component {
   }
 
   animate() {
-    this.controls.update()
+    // this.controls.update()
     this.renderScene()
     this.frameId = window.requestAnimationFrame(this.animate.bind(this))
     // Move.move()
 
-    // var canvas = document.getElementById('konva-2')
-    // this.texture = new THREE.Texture(canvas)
-    // let geometry = new THREE.PlaneGeometry( 30, 30 )
-    // let material.map = this.texture
-    // material.needsUpdate = true
-    // this.plane = new THREE.Mesh( geometry, material );
-    this.texture.needsUpdate = true;
-    // this.changeCanvas()
+    if (this.arToolkitSource.ready) {
+      this.arToolkitContext.update(this.arToolkitSource.domElement)
+      // this.scene.visible = this.camera.visible
+    }
+
+    this.texture.needsUpdate = true
   }
 
   stop() {
@@ -205,7 +244,6 @@ class Scene extends Component {
           ref={(mount) => { this.mount = mount }}
         />
         <Canvas />
-        <canvas id="canvas2"></canvas>
       </div>
     )
   }

@@ -81,6 +81,17 @@ class Canvas extends Component {
       this.event.dragEnd(e)
     })
 
+
+    this.background = new Konva.Rect({
+      x: 0,
+      y: 0,
+      width: this.stage.width(),
+      height: this.stage.height(),
+      fill: 'blue',
+      listening: false,
+    });
+    this.layer.add(this.background);
+
     this.circle = new Konva.Circle({
       x: 0,
       y: 0,

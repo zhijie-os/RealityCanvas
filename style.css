@@ -1,3 +1,10 @@
+#workarea {
+  width: 400px;
+  height: 400px;
+}
+
+
+/*
 #parameterize-button {
   z-index: 2000;
   position: fixed;
@@ -24,7 +31,6 @@
 }
 
 #workarea {
-  /*position: absolute;*/
   width: 100px;
   height: 100px;
 }
@@ -51,7 +57,7 @@ body {
 .dragged {
   position: absolute;
   left: 0;
-  top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
+  top: 0;
   width: 200px;
   background: rgba(255,255,255,0.66);
   border: 2px  solid rgba(0,0,0,0.5);
@@ -83,3 +89,4 @@ body {
   width: 100%;
   height: 15%;
 }
+*/
