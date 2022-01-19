@@ -12,16 +12,16 @@ class Event {
     this.mode = null
   }
 
-  mouseDown(e) {
-    /*
+  mouseDown(pos) {
     if (this.mode === 'parameterize') {
-      this.parameterize.mouseDown(e)
+      this.parameterize.mouseDown(pos)
       return
     }
     if (this.mode === 'graph') {
-      this.graph.mouseDown(e)
+      this.graph.mouseDown(pos)
       return
     }
+    /*
     if (e.target !== this.stage) return
     this.isPaint = true
     let pos = this.stage.getPointerPosition()
@@ -39,48 +39,46 @@ class Event {
       stroke: 'red',
       strokeWidth: 5,
       lineCap: 'round',
-      points: [e.x, e.y, e.x, e.y]
+      points: [pos.x, pos.y, pos.x, pos.y]
     })
     this.layer.add(this.lastLine)
   }
 
-  mouseMove(e) {
-    /*
+  mouseMove(pos) {
     if (this.mode === 'parameterize') {
-      this.parameterize.mouseMove(e)
+      this.parameterize.mouseMove(pos)
       return
     }
     if (this.mode === 'graph') {
-      this.graph.mouseMove(e)
+      this.graph.mouseMove(pos)
       return
     }
     if (!this.isPaint) return
+    /*
     e.evt.preventDefault()
     const pos = this.stage.getPointerPosition()
     let newPoints = this.lastLine.points().concat([pos.x, pos.y])
     this.lastLine.points(newPoints)
     */
 
-    let newPoints = this.lastLine.points().concat([e.x, e.y])
+    let newPoints = this.lastLine.points().concat([pos.x, pos.y])
     this.lastLine.points(newPoints)
   }
 
-  mouseUp(e) {
-    /*
+  mouseUp(pos) {
     if (this.mode === 'parameterize') {
-      this.parameterize.mouseUp(e)
+      this.parameterize.mouseUp(pos)
       return
     }
     if (this.mode === 'graph') {
-      this.graph.mouseUp(e)
+      this.graph.mouseUp(pos)
       return
     }
-    */
 
     if (!this.isPaint) return
     this.isPaint = false
     Canvas.setState({ lastLine: this.lastLine })
-    // Canvas.morph.animate()
+    Canvas.morph.animate()
   }
 
   dragMove(e) {

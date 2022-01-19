@@ -43,8 +43,8 @@ class Canvas extends Component {
 
     this.stage = new Konva.Stage({
       container: 'konva',
-      width: 400,
-      height: 400
+      width: 1024,
+      height: 1024
     })
     this.layer = new Konva.Layer()
     this.layer.getCanvas()._canvas.id = 'konva-1'
@@ -81,14 +81,14 @@ class Canvas extends Component {
       this.event.dragEnd(e)
     })
 
-
     this.background = new Konva.Rect({
       x: 0,
       y: 0,
       width: this.stage.width(),
       height: this.stage.height(),
-      fill: 'blue',
       listening: false,
+      fill: 'white',
+      opacity: 0.1,
     });
     this.layer.add(this.background);
 
@@ -109,8 +109,6 @@ class Canvas extends Component {
     .addEventListener('click', (e) => {
       this.event.mode = 'graph'
     })
-
-
   }
 
   render() {

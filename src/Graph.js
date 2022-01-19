@@ -20,11 +20,11 @@ class Graph {
     }
   }
 
-  mouseDown(e) {
-    console.log(e)
+  mouseDown(pos) {
+    console.log(pos)
     this.switchDraggable(false)
     this.isPaint = true
-    let pos = this.stage.getPointerPosition()
+    // let pos = this.stage.getPointerPosition()
     this.axis = new Konva.Group({ x: 0, y: 0 })
     this.ticks = new Konva.Group({ x: 0, y: 0 })
     this.line = new Konva.Line({
@@ -41,10 +41,10 @@ class Graph {
     this.graphLayer.add(this.axis)
   }
 
-  mouseMove(e) {
+  mouseMove(pos) {
     if (!this.isPaint) return
-    e.evt.preventDefault()
-    const pos = this.stage.getPointerPosition()
+    // e.evt.preventDefault()
+    // const pos = this.stage.getPointerPosition()
     // this.update(this.axis, pos)
     let line = this.axis.children[0]
     let points = line.getPoints()
@@ -63,7 +63,7 @@ class Graph {
     line.setPoints(points)
   }
 
-  mouseUp(e) {
+  mouseUp(pos) {
     if (!this.isPaint) return
     this.isPaint = false
     this.switchDraggable(true)

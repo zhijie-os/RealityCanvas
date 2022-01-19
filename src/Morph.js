@@ -89,7 +89,7 @@ class Morph {
         path.id(`path-${Canvas.state.num}`)
         this.layer.add(path)
         Canvas.setState({ num: Canvas.state.num+1 })
-        // Canvas.physics.addBody(path)
+        Canvas.physics.addBody(path)
       }
     })
   }

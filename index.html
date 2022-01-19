@@ -5,22 +5,77 @@
     <link rel="shortcut icon" href="#" />
     <link rel="stylesheet" href="./style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js" defer></script>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="https://cdn.8thwall.com/web/aframe/8frame-1.2.0.min.js"></script>
+    <script src="https://cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+    <script async src="https://apps.8thwall.com/xrweb?appKey=aIosYEDG37bs43LDn2FWvxVSjU4XVGKwRu3M3Y7p9V1KTWrtUOXArhFOuLFpzJmw2qfV7t"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/SVG-Morpheus/0.3.2/svg-morpheus.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.js"></script>
-
-    <!-- Use prior to r127 for AR.jS -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.min.js"></script> -->
-    <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/3.3.2/three.js/build/ar.js"></script> -->
-
   </head>
 
   <body>
     <div id="react-app"></div>
-
     <script src="dist/bundle.js"></script>
+
+    <a-scene
+      xrextras-almost-there
+      xrextras-loading
+      xrextras-runtime-error
+      renderer="colorManagement:true"
+      xrweb="allowedDevices:any;"
+      xrextras-gesture-detector
+    >
+      <a-camera
+        id="camera"
+        position="0 8 0"
+        raycaster="objects: .cantap"
+        cursor="
+          fuse: false;
+          rayOrigin: mouse;"
+      >
+      </a-camera>
+      <a-entity
+        light="
+          type: directional;
+          intensity: 0.8;
+          castShadow: true;
+          shadowMapHeight:2048;
+          shadowMapWidth:2048;
+          shadowCameraTop: 20;
+          shadowCameraBottom: -20;
+          shadowCameraRight: 20;
+          shadowCameraLeft: -20;
+          target: #camera"
+        xrextras-attach="target: camera; offset: 8 15 4"
+        position="1 4.3 2.5"
+        shadow
+      >
+      </a-entity>
+      <a-light type="ambient" intensity="0.5"></a-light>
+
+      <a-plane
+        id="plane"
+        drawable
+        class="cantap"
+        position="0 5 -10"
+        rotation="0 0 0"
+        width="10"
+        height="10"
+        color="#7BC8A4"
+        shadow
+      >
+      </a-plane>
+
+      <a-box
+        id="ground"
+        class="cantap"
+        scale="1000 2 1000"
+        position="0 -1 0"
+        material="shader: shadow; transparent: true; opacity: 0.4"
+        shadow
+      >
+      </a-box>
+    </a-scene>
+
   </body>
 </html>
