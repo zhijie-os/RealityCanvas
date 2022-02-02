@@ -10,6 +10,10 @@ class Event {
     this.graph = Canvas.graph
     this.isPaint = false
     this.mode = null
+    this.anim = null
+    this.time = null
+    this.animatedLineStorage = null
+    this.emitterLinePoints = []
   }
 
   mouseDown(pos) {
@@ -35,13 +39,25 @@ class Event {
     */
 
     this.isPaint = true
+
+
+
     this.lastLine = new Konva.Line({
-      stroke: 'red',
+      stroke: (( Canvas.drawingMode === "emitterLine") ? 'blue' : 'red'),
       strokeWidth: 5,
       lineCap: 'round',
+      name:  (( Canvas.drawingMode === "emitterLine") ? 'emitterLine' : 'lineToAnimate'),
       points: [pos.x, pos.y, pos.x, pos.y]
     })
     this.layer.add(this.lastLine)
+    
+    if(Canvas.drawingMode === "emitterLine")
+    {
+      this.emitterLinePoints.push(pos.x, pos.y, pos.x, pos.y)
+      // console.log(typeof(pos.x))
+      // console.log(emitterLinePoints)
+
+    }
   }
 
   mouseMove(pos) {
@@ -76,9 +92,21 @@ class Event {
     }
 
     if (!this.isPaint) return
+
     this.isPaint = false
     Canvas.setState({ lastLine: this.lastLine })
-    Canvas.morph.animate()
+    if(Canvas.drawingMode === "emitterLine")
+    {
+      this.emitterLinePoints.push(pos.x, pos.y)
+      // console.log(typeof(pos.x))
+      // console.log(emitterLinePoints)
+
+    }
+
+
+
+
+    //Canvas.morph.animate()
   }
 
   dragMove(e) {

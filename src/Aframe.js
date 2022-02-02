@@ -12,6 +12,18 @@ class Aframe extends Component {
 
   componentDidMount() {
 
+    AFRAME.registerComponent('startButton', {
+ init: function () {
+    var cube = document.querySelector("#boxId");
+    cube.addEventListener("mousedown",function(evt){
+        cube.setAttribute('material', 'color',"red");
+    });
+    cube.addEventListener("mouseup",function(evt){
+        cube.setAttribute('material', 'color',"blue");
+    });
+ }
+});
+    
     AFRAME.registerComponent('drawable', {
       init: function() {
         let mesh = this.el.object3D.children[0]
@@ -90,6 +102,7 @@ class Aframe extends Component {
 
   render() {
     return (
+      
       <>
         <Canvas />
       </>

@@ -2,7 +2,17 @@ class Morph {
   constructor() {
     this.stage = Canvas.stage
     this.layer = Canvas.layer
+    this.anim = null
+    this.time = null
+    this.tween = null
+    this.animatedLineStorage = null
+    this.tweenStorage = []
+    this.counter = 0
+    this.animate = this.animate.bind(this);
+    this.replayAnimation = this.replayAnimation.bind(this);
     // this.lastLine = canvas.lastLine
+
+
   }
 
   init() {
@@ -44,55 +54,127 @@ class Morph {
 
   }
 
-  animate() {
-    this.init()
-
-    let prev
-    pasition.animate({
-      from: this.d,
-      to: this.d4,
-      time: 100,
-      // easing : function(){ },
-      begin: (shapes) => {
-        Canvas.state.lastLine.points([])
-        Canvas.state.lastLine.destroy()
-      },
-      progress: (shapes, percent) => {
-        this.g.removeChildren()
-        for (let curves of shapes) {
-          for (let curve of curves) {
-            let d = `M${curve[0]},${curve[1]} C${curve[2]},${curve[3]} ${curve[4]},${curve[5]} ${curve[6]},${curve[7]}`
-            let p = new Konva.Path({
-              x: 0,
-              y: 0,
-              data: d,
-              stroke: 'red',
-              strokeWidth: 5,
-            })
-            this.g.add(p)
+  replayAnimation(counter)
+  {
+    this.counter = counter
+    this.tween.reset()
+    //this.tween.destroy()
+    if(this.counter == this.animatedLineStorage.length)
+      {
+        for(var i = 0; i < this.animatedLineStorage.length; i++)
+          {
+            this.tweenStorage[j].reset()
           }
-        }
-      },
-      end: (shapes) => {
-        console.log('end')
-        this.g.removeChildren()
-        // addBody(d1, ncx, ncy)
-
-        let path = new Konva.Path({
-          x: this.ox,
-          y: this.oy,
-          data: this.d3,
-          stroke: 'red',
-          strokeWidth: 5,
-          draggable: true,
-        })
-        path.id(`path-${Canvas.state.num}`)
-        this.layer.add(path)
-        Canvas.setState({ num: Canvas.state.num+1 })
-        Canvas.physics.addBody(path)
+        this.animate()    
       }
-    })
   }
+  animate()
+  {
+    this.animatedLineStorage =  this.stage.find('.lineToAnimate');
+      let randomIndex = Canvas.generateRandomIndex()
+      let xRandomPos = Canvas.emitterLinePointsCopy[randomIndex]
+      let yRandomPos = Canvas.emitterLinePointsCopy[randomIndex - 1]
+    for(var i = 0; i < this.animatedLineStorage.length; i++)
+    {
+
+      this.tween = new Konva.Tween({
+        // list of tween specific properties
+        node: this.animatedLineStorage[i],
+        duration: 1,
+        easing: Konva.Easings.EaseInOut,
+        onUpdate: () => console.log('node attrs updated'),
+        onFinish: function() {
+          if(Canvas.normalAnimation == true)
+          {
+
+          this.tween.reset()
+            
+//           this.animatedLineStorage[i].x(( Math.abs(this.animatedLineStorage[i].offsetX() - xRandomPos)));
+//           this.animatedLineStorage[i].y( -1 * Math.abs(this.animatedLineStorage[i].offsetY()  - yRandomPos))
+            this.tween.play()
+          }
+          
+          
+        },
+        // set new values for any attributes of a passed node
+        y: this.stage.height(),
+        fill: 'red'
+      });
+
+      this.tweenStorage.push(this.tween)      
+    }
+
+    for(var j = 0; j < this.tweenStorage.length; j++)
+    {
+      this.tweenStorage[j].play()
+    }
+    // play tween
+    // this.tween.play();
+  
+    // this.anim = new Konva.Animation(function (frame) {
+    // this.time = frame.time
+    // // duration++
+    // for (var i = 0; i < this.animatedLineStorage.length; i++)
+    // {
+    //   this.animatedLineStorage[i].y((this.time/90) + this.animatedLineStorage[i].y())
+    //   //this.animatedLineStorage[i].y(this.time)
+    //   // alert("in here")
+    //   // console.log(drawnLines[i].x())
+    // }
+    // }, this.layer);
+    // this.anim.start()
+  }
+  
+  
+  // animate() {
+  //   this.init()
+
+  //   let prev
+  //   pasition.animate({
+  //     from: this.d,
+  //     to: this.d4,
+  //     time: 100,
+  //     // easing : function(){ },
+  //     begin: (shapes) => {
+  //       Canvas.state.lastLine.points([])
+  //       Canvas.state.lastLine.destroy()
+  //     },
+  //     progress: (shapes, percent) => {
+  //       this.g.removeChildren()
+  //       for (let curves of shapes) {
+  //         for (let curve of curves) {
+  //           let d = `M${curve[0]},${curve[1]} C${curve[2]},${curve[3]} ${curve[4]},${curve[5]} ${curve[6]},${curve[7]}`
+  //           let p = new Konva.Path({
+  //             x: 0,
+  //             y: 0,
+  //             data: d,
+  //             stroke: 'red',
+  //             strokeWidth: 5,
+  //           })
+  //           this.g.add(p)
+  //         }
+  //       }
+  //     },
+  //     end: (shapes) => {
+  //       console.log('end')
+  //       this.g.removeChildren()
+  //       // addBody(d1, ncx, ncy)
+
+  //       let path = new Konva.Path({
+  //         x: this.ox,
+  //         y: this.oy,
+  //         data: this.d3,
+  //         stroke: 'red',
+  //         strokeWidth: 5,
+  //         draggable: true,
+  //       })
+  //       path.id(`path-${Canvas.state.num}`)
+  //       this.layer.add(path)
+  //       Canvas.setState({ num: Canvas.state.num+1 })
+  //       Canvas.physics.addBody(path)
+  //     }
+  //   })
+  // }
 
  getBoundingBox(d) {
     let d0 = d

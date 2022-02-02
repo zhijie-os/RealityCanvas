@@ -22,6 +22,7 @@ class Video extends Component {
 
   render() {
     return (
+      <button onClick={sayHello}>Default</button>;
       <video id="video"></video>
     )
   }

@@ -36,6 +36,9 @@ class Canvas extends Component {
       ball: null,
       line: null,
     }
+    this.animateLines = this.animateLines.bind(this);
+    this.spawnFromEmitterLine = this.spawnFromEmitterLine.bind(this);
+    this.generateRandomIndex = this.generateRandomIndex.bind(this);
   }
 
   componentDidMount() {
@@ -54,6 +57,9 @@ class Canvas extends Component {
     this.stage.add(this.layer)
     this.stage.add(this.lineLayer)
     this.stage.add(this.graphLayer)
+    this.numberOfLines = 0
+    this.drawingMode = "animateLines"
+    this.emitterLinePointsCopy = null
 
     this.physics = new Physics()
     this.contextMenu = new ContextMenu()
@@ -61,6 +67,8 @@ class Canvas extends Component {
     this.graph = new Graph()
     this.morph = new Morph()
     this.event = new Event()
+    this.normalAnimation = true
+    this.loopAnimation = false
 
     this.stage.on('contextmenu', (e) => {
       this.contextMenu.show(e)
@@ -80,6 +88,8 @@ class Canvas extends Component {
     this.layer.on('dragend', (e) => {
       this.event.dragEnd(e)
     })
+    
+
 
     this.background = new Konva.Rect({
       x: 0,
@@ -100,6 +110,8 @@ class Canvas extends Component {
     })
     this.layer.add(this.circle)
 
+
+
     document.getElementById('parameterize-button')
     .addEventListener('click', (e) => {
       this.event.mode = 'parameterize'
@@ -111,9 +123,40 @@ class Canvas extends Component {
     })
   }
 
+  
+    animateLines(e) {
+      this.drawingMode = "animateLines"
+    this.normalAnimation = true
+    this.loopAnimation = false
+    this.morph.animate()
+  }
+  
+  spawnFromEmitterLine(e) {
+      this.drawingMode = "emitterLine"
+    this.emitterLinePointsCopy =  [...this.event.emitterLinePoints]
+  }
+  
+  generateRandomIndex()
+  {
+    this.randomIndex = Math.floor( Math.random() * this.emitterLinePointsCopy.length / 2 ) * 2
+    return this.randomIndex
+  }
+  
   render() {
     return (
+      <>
+          <div style={{position: 'fixed', top: '10px', width:'100%', textAlign: 'center', zIndex: 1}}>
+    <button id = "animateButton" onClick={this.animateLines}>
+        Animate
+    </button>
+
+    <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine}>
+        Emitter Line
+    </button>
+</div>
+
       <div id="workarea">
+      
         <button id="parameterize-button">Parameter Line</button>
         <button id="axis-button">Axis Line</button>
         <div id="konva" className="svgcanvas" style={{ position: 'relative' }}></div>
@@ -123,7 +166,12 @@ class Canvas extends Component {
             <button id="static-button">Static body</button>
           </div>
         </div>
+
+
       </div>
+</>
+
+
     )
   }
 }
