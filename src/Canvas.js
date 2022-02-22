@@ -38,7 +38,10 @@ class Canvas extends Component {
     }
     this.animateLines = this.animateLines.bind(this);
     this.spawnFromEmitterLine = this.spawnFromEmitterLine.bind(this);
+    this.spawnFromEmitterLineHorizontal = this.spawnFromEmitterLineHorizontal.bind(this);
     this.generateRandomIndex = this.generateRandomIndex.bind(this);
+    this.motionPathLine = this.motionPathLine.bind(this)
+
   }
 
   componentDidMount() {
@@ -59,7 +62,7 @@ class Canvas extends Component {
     this.stage.add(this.graphLayer)
     this.numberOfLines = 0
     this.drawingMode = "animateLines"
-    this.emitterLinePointsCopy = null
+    this.emitterLinePointsCopy = []
 
     this.physics = new Physics()
     this.contextMenu = new ContextMenu()
@@ -69,6 +72,8 @@ class Canvas extends Component {
     this.event = new Event()
     this.normalAnimation = true
     this.loopAnimation = false
+    this.verticalEmitter = false
+    this.horizontalEmitter = false
 
     this.stage.on('contextmenu', (e) => {
       this.contextMenu.show(e)
@@ -128,17 +133,36 @@ class Canvas extends Component {
       this.drawingMode = "animateLines"
     this.normalAnimation = true
     this.loopAnimation = false
+    //this.emitterLinePointsCopy =  this.event.emitterLinePoints
+      
     this.morph.animate()
   }
   
   spawnFromEmitterLine(e) {
       this.drawingMode = "emitterLine"
-    this.emitterLinePointsCopy =  [...this.event.emitterLinePoints]
+    this.verticalEmitter = true
+    this.horizontalEmitter = false
+  }
+  
+    spawnFromEmitterLineHorizontal(e) {
+      this.drawingMode = "emitterLine"
+      
+          this.verticalEmitter = false
+    this.horizontalEmitter = true
+  }
+  
+  motionPathLine(e)
+  {
+      this.drawingMode = "emitterLine"
+      
+          this.verticalEmitter = true
+    this.horizontalEmitter = true 
   }
   
   generateRandomIndex()
   {
     this.randomIndex = Math.floor( Math.random() * this.emitterLinePointsCopy.length / 2 ) * 2
+    console.log("random index", this.randomIndex)
     return this.randomIndex
   }
   
@@ -151,8 +175,18 @@ class Canvas extends Component {
     </button>
 
     <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine}>
-        Emitter Line
+        Vertical Emitter Line
     </button>
+
+    <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal}>
+        Horizontal Emitter Line
+    </button>
+
+    <button id = "motionPath" onClick={this.motionPathLine}>
+        Motion Path
+    </button>
+
+  
 </div>
 
       <div id="workarea">

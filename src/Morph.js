@@ -68,12 +68,16 @@ class Morph {
         this.animate()    
       }
   }
+  
+  setEmitterLinePosition(line, xRandomPos, yRandomPos)
+  {
+      line.x(( Math.abs(line.attrs.points[0] - xRandomPos)));
+    line.y( -1 * Math.abs(line.attrs.points[1] - yRandomPos))
+  }
   animate()
   {
     this.animatedLineStorage =  this.stage.find('.lineToAnimate');
-      let randomIndex = Canvas.generateRandomIndex()
-      let xRandomPos = Canvas.emitterLinePointsCopy[randomIndex]
-      let yRandomPos = Canvas.emitterLinePointsCopy[randomIndex - 1]
+
     for(var i = 0; i < this.animatedLineStorage.length; i++)
     {
 
@@ -82,22 +86,39 @@ class Morph {
         node: this.animatedLineStorage[i],
         duration: 1,
         easing: Konva.Easings.EaseInOut,
-        onUpdate: () => console.log('node attrs updated'),
+        onUpdate: function()
+        {
+
+        },
         onFinish: function() {
           if(Canvas.normalAnimation == true)
           {
+             let randomIndex = Canvas.generateRandomIndex()
+      let xRandomPos = Canvas.emitterLinePointsCopy[randomIndex]
+      let yRandomPos = Canvas.emitterLinePointsCopy[randomIndex - 1]
+      console.log(Canvas.emitterLinePointsCopy)
 
           this.tween.reset()
-            
-//           this.animatedLineStorage[i].x(( Math.abs(this.animatedLineStorage[i].offsetX() - xRandomPos)));
-//           this.animatedLineStorage[i].y( -1 * Math.abs(this.animatedLineStorage[i].offsetY()  - yRandomPos))
+            let updatedPoints = this.node.points()
+            //updatedPoints[0] = xRandomPos
+            console.log(xRandomPos)
+            console.log(yRandomPos)
+            //updatedPoints[1] = yRandomPos
+            //this.node.points(updatedPoints)
+          this.node.x(( xRandomPos - this.node.attrs.points[0] ))
+          this.node.y( -1.5* (yRandomPos - this.node.attrs.points[1]))
             this.tween.play()
+
+          
+
           }
           
           
         },
+
         // set new values for any attributes of a passed node
-        y: this.stage.height(),
+        y: (( Canvas.verticalEmitter === true ? this.stage.height()  : 0)),
+        x: (( Canvas.horizontalEmitter === true ? this.stage.width() : 0)),
         fill: 'red'
       });
 
@@ -105,24 +126,12 @@ class Morph {
     }
 
     for(var j = 0; j < this.tweenStorage.length; j++)
-    {
-      this.tweenStorage[j].play()
-    }
-    // play tween
-    // this.tween.play();
-  
-    // this.anim = new Konva.Animation(function (frame) {
-    // this.time = frame.time
-    // // duration++
-    // for (var i = 0; i < this.animatedLineStorage.length; i++)
-    // {
-    //   this.animatedLineStorage[i].y((this.time/90) + this.animatedLineStorage[i].y())
-    //   //this.animatedLineStorage[i].y(this.time)
-    //   // alert("in here")
-    //   // console.log(drawnLines[i].x())
-    // }
-    // }, this.layer);
-    // this.anim.start()
+     {
+
+//       this.tweenStorage[j].reset()
+        this.tweenStorage[j].play()
+  }
+
   }
   
   

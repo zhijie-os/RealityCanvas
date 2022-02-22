@@ -53,7 +53,7 @@ class Event {
     
     if(Canvas.drawingMode === "emitterLine")
     {
-      this.emitterLinePoints.push(pos.x, pos.y, pos.x, pos.y)
+      Canvas.emitterLinePointsCopy.push(pos.x, pos.y, pos.x, pos.y)
       // console.log(typeof(pos.x))
       // console.log(emitterLinePoints)
 
@@ -77,8 +77,20 @@ class Event {
     this.lastLine.points(newPoints)
     */
 
+        if(Canvas.drawingMode === "emitterLine")
+    {
+      console.log("in emitter line")
+      Canvas.emitterLinePointsCopy.push(pos.x, pos.y)
+          let newPoints = this.lastLine.points().concat([pos.x, pos.y])
+    this.lastLine.points(newPoints)
+      // console.log(typeof(pos.x))
+      // console.log(emitterLinePoints)
+
+    }
+    else{
     let newPoints = this.lastLine.points().concat([pos.x, pos.y])
     this.lastLine.points(newPoints)
+    }
   }
 
   mouseUp(pos) {
@@ -97,7 +109,8 @@ class Event {
     Canvas.setState({ lastLine: this.lastLine })
     if(Canvas.drawingMode === "emitterLine")
     {
-      this.emitterLinePoints.push(pos.x, pos.y)
+      console.log("in emitter line")
+      Canvas.emitterLinePointsCopy.push(pos.x, pos.y)
       // console.log(typeof(pos.x))
       // console.log(emitterLinePoints)
 
