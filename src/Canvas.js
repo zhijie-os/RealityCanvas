@@ -20,51 +20,37 @@ class Canvas extends Component {
       lastLine: null,
       ball: null,
       line: null,
-      lines: []
+      lines: [],
+      currentPoints: [],
+      mode: 'drawing'
     }
-    this.event = new Event(this)
+    // this.event = new Event(this)
     this.emit = new Emit(this)
-    this.physics = new Physics(this)
+    // this.physics = new Physics(this)
   }
 
   componentDidMount() {
-    // this.numberOfLines = 0
-    // this.drawingMode = "animateLines"
-    // this.emitterLinePointsCopy = []
-
-    // this.normalAnimation = true
-    // this.loopAnimation = false
-    // this.verticalEmitter = false
-    // this.horizontalEmitter = false
   }
 
   mouseDown(pos) {
-    this.isPaint = true
-    let lines = this.state.lines
-    lines.push({
-      points: [pos.x, pos.y, pos.x, pos.y]
-    })
-    this.setState({ lines: lines })
+    this.setState({ isPaint: true, currentPoints: [pos.x, pos.y, pos.x, pos.y] })
   }
 
   mouseMove(pos) {
-    if (!this.isPaint) return false
-    let lines = this.state.lines
-    let current = _.last(lines)
-    let points = current.points
+    if (!this.state.isPaint) return false
+    let points = this.state.currentPoints
     if (points[points.length-2] === pos.x && points[points.length-1] === pos.y) return false
-    current.points = points.concat([pos.x, pos.y])
-    lines[lines.length-1] = current
-    console.log(lines)
-    this.setState({ lines: lines })
+    points = points.concat([pos.x, pos.y])
+    this.setState({ currentPoints: points })
   }
 
   mouseUp(pos) {
-    this.isPaint = false
-    // this.canvas.setState({ lastLine: this.lastLine })
-    // if(this.canvas.drawingMode === 'emitterLine') {
-    //   this.canvas.emitterLinePointsCopy.push(pos.x, pos.y)
-    // }
+    let lines = this.state.lines
+    lines.push({
+      points: this.state.currentPoints,
+      type: this.state.mode
+    })
+    this.setState({ isPaint: false, lines: lines, currentPoints: [] })
   }
 
   addPhysics() {
@@ -158,12 +144,6 @@ class Canvas extends Component {
     this.tween.play()
   }
 
-  motionLine(e) {
-    this.drawingMode = "motionLine"
-    this.verticalEmitter = false
-    this.horizontalEmitter = false
-  }
-
   animateLines(e) {
     this.drawingMode = "animateLines"
     this.normalAnimation = true
@@ -172,63 +152,57 @@ class Canvas extends Component {
     this.emit.animate()
   }
   
-  spawnFromEmitterLine(e) {
-    this.drawingMode = "emitterLine"
-    this.verticalEmitter = true
-    this.horizontalEmitter = false
-  }
-  
-  spawnFromEmitterLineHorizontal(e) {
-    this.drawingMode = "emitterLine"
-    this.verticalEmitter = false
-    this.horizontalEmitter = true
-  }
-  
-  motionPathLine(e) {
-    this.drawingMode = "emitterLine"
-    this.verticalEmitter = true
-    this.horizontalEmitter = true 
+  changeMode(mode) {
+    this.setState({ mode: mode })
   }
 
   render() {
+    let drawingLines = this.state.lines.filter(line => line.type === 'drawing')
+    let emitterLines = this.state.lines.filter(line => line.type === 'emitter')
     return (
       <>
         <div style={{position: 'fixed', top: '10px', width:'100%', textAlign: 'center', zIndex: 1}}>
           <button id = "animateButton" onClick={this.animateLines.bind(this)}>
             Animate
           </button>
-          <button id = "motionLineButton" onClick={this.motionLine.bind(this)}>
+          <button onClick={ this.changeMode.bind(this, 'drawing') }>
+            Drawing Line
+          </button>
+          <button onClick={ this.changeMode.bind(this, 'motion') }>
             Motion Line
           </button>
-          <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine.bind(this)}>
-            Vertical Emitter Line
-          </button>
-          <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal.bind(this)}>
-              Horizontal Emitter Line
-          </button>
-          <button id = "motionPath" onClick={this.motionPathLine.bind(this)}>
-              Motion Path
+          <button onClick={ this.changeMode.bind(this, 'emitter') }>
+            Emitter Line
           </button>
         </div>
-
 
         <Stage width={ App.size } height={ App.size }>
           <Layer>
             <Text text="Try click on rect" />
-            { this.state.lines.map((line, i) => {
+            <Line
+              points={ this.state.currentPoints }
+              stroke={ 'black' }
+            />
+            { drawingLines.map((line, i) => {
+                return (
+                  <Line
+                    key={ i }
+                    points={ line.points }
+                    stroke={ 'red' }
+                  />
+                )
+            })}
+            { emitterLines.map((line, i) => {
               return (
                 <Line
                   key={ i }
                   points={ line.points }
-                  stroke={ 'red' }
+                  stroke={ 'blue' }
                 />
               )
             })}
           </Layer>
         </Stage>
-        {/*<div id="workarea">
-          <div id="konva" className="svgcanvas" style={{ position: 'relative' }}></div>
-        </div>*/}
       </>
     )
   }
