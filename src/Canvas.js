@@ -17,11 +17,6 @@ class Canvas extends Component {
       ball: null,
       line: null,
     }
-    this.animateLines = this.animateLines.bind(this)
-    this.spawnFromEmitterLine = this.spawnFromEmitterLine.bind(this)
-    this.spawnFromEmitterLineHorizontal = this.spawnFromEmitterLineHorizontal.bind(this)
-    this.generateRandomIndex = this.generateRandomIndex.bind(this)
-    this.motionPathLine = this.motionPathLine.bind(this)
   }
 
   componentDidMount() {
@@ -35,6 +30,7 @@ class Canvas extends Component {
     this.layer = new Konva.Layer()
     this.layer.getCanvas()._canvas.id = 'konva-1'
     this.stage.add(this.layer)
+
     this.numberOfLines = 0
     this.drawingMode = "animateLines"
     this.emitterLinePointsCopy = []
@@ -104,6 +100,12 @@ class Canvas extends Component {
     this.tween.play()
   }
 
+  motionLine(e) {
+    this.drawingMode = "motionLine"
+    this.verticalEmitter = false
+    this.horizontalEmitter = false
+  }
+
   animateLines(e) {
     this.drawingMode = "animateLines"
     this.normalAnimation = true
@@ -131,29 +133,27 @@ class Canvas extends Component {
     this.horizontalEmitter = true 
   }
 
-  generateRandomIndex() {
-    this.randomIndex = Math.floor( Math.random() * this.emitterLinePointsCopy.length / 2 ) * 2
-    console.log("random index", this.randomIndex)
-    return this.randomIndex
-  }
-
   render() {
     return (
       <>
         <div style={{position: 'fixed', top: '10px', width:'100%', textAlign: 'center', zIndex: 1}}>
-          <button id = "animateButton" onClick={this.animateLines}>
+          <button id = "animateButton" onClick={this.animateLines.bind(this)}>
             Animate
           </button>
 
-          <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine}>
+          <button id = "motionLineButton" onClick={this.motionLine.bind(this)}>
+            Motion Line
+          </button>
+
+          <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine.bind(this)}>
             Vertical Emitter Line
           </button>
 
-          <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal}>
+          <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal.bind(this)}>
               Horizontal Emitter Line
           </button>
 
-          <button id = "motionPath" onClick={this.motionPathLine}>
+          <button id = "motionPath" onClick={this.motionPathLine.bind(this)}>
               Motion Path
           </button>
         </div>

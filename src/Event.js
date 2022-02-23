@@ -7,18 +7,29 @@ class Event {
   mouseDown(pos) {
     console.log('mousedown')
     this.isPaint = true
+
+    let color = 'red'
+    let name = 'lineToAnimate'
+    if (this.canvas.drawingMode === 'emitterLine') {
+      color = 'blue'
+      name = 'emitterLine'
+    }
+    if (this.canvas.drawingMode === 'motionLine') {
+      color = 'green'
+      name = 'motionrLine'
+    }
+
     this.lastLine = new Konva.Line({
-      stroke: (this.canvas.drawingMode === 'emitterLine') ? 'blue' : 'red',
+      stroke: color,
       strokeWidth: 5,
       lineCap: 'round',
-      name:  (this.canvas.drawingMode === 'emitterLine') ? 'emitterLine' : 'lineToAnimate',
+      name: name,
       points: [pos.x, pos.y, pos.x, pos.y]
     })
     this.canvas.layer.add(this.lastLine)
-    
-    if(this.canvas.drawingMode === 'emitterLine') {
-      this.canvas.emitterLinePointsCopy.push(pos.x, pos.y, pos.x, pos.y)
-    }
+    // if(this.canvas.drawingMode === 'emitterLine') {
+    //   this.canvas.emitterLinePointsCopy.push(pos.x, pos.y, pos.x, pos.y)
+    // }
   }
 
   mouseMove(pos) {
