@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import AFRAME from 'aframe'
 import Canvas from './Canvas'
 import Event from './Event'
+import './App.css'
 
 class App extends Component {
   constructor(props) {

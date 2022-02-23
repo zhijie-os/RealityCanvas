@@ -16,10 +16,10 @@ class Canvas extends Component {
       ball: null,
       line: null,
     }
-    this.animateLines = this.animateLines.bind(this);
-    this.spawnFromEmitterLine = this.spawnFromEmitterLine.bind(this);
-    this.spawnFromEmitterLineHorizontal = this.spawnFromEmitterLineHorizontal.bind(this);
-    this.generateRandomIndex = this.generateRandomIndex.bind(this);
+    this.animateLines = this.animateLines.bind(this)
+    this.spawnFromEmitterLine = this.spawnFromEmitterLine.bind(this)
+    this.spawnFromEmitterLineHorizontal = this.spawnFromEmitterLineHorizontal.bind(this)
+    this.generateRandomIndex = this.generateRandomIndex.bind(this)
     this.motionPathLine = this.motionPathLine.bind(this)
   }
 
@@ -71,13 +71,13 @@ class Canvas extends Component {
     this.verticalEmitter = true
     this.horizontalEmitter = true 
   }
-  
+
   generateRandomIndex() {
     this.randomIndex = Math.floor( Math.random() * this.emitterLinePointsCopy.length / 2 ) * 2
     console.log("random index", this.randomIndex)
     return this.randomIndex
   }
-  
+
   render() {
     return (
       <>

@@ -10,7 +10,8 @@ class Morph {
   }
 
   animate() {
-    this.animatedLineStorage =  this.canvas.stage.find('.lineToAnimate')
+    this.animatedLineStorage = this.canvas.stage.find('.lineToAnimate')
+    let canvas = this.canvas
     for(var i = 0; i < this.animatedLineStorage.length; i++) {
       this.tween = new Konva.Tween({
         node: this.animatedLineStorage[i],
@@ -19,11 +20,11 @@ class Morph {
         onUpdate: function() {
         },
         onFinish: function() {
-          if(Canvas.normalAnimation == true) {
-            let randomIndex = Canvas.generateRandomIndex()
-            let xRandomPos = Canvas.emitterLinePointsCopy[randomIndex]
-            let yRandomPos = Canvas.emitterLinePointsCopy[randomIndex - 1]
-            console.log(Canvas.emitterLinePointsCopy)
+          if(canvas.normalAnimation === true) {
+            let randomIndex = canvas.generateRandomIndex()
+            let xRandomPos = canvas.emitterLinePointsCopy[randomIndex]
+            let yRandomPos = canvas.emitterLinePointsCopy[randomIndex - 1]
+            console.log(canvas.emitterLinePointsCopy)
 
             this.tween.reset()
             let updatedPoints = this.node.points()
@@ -38,8 +39,8 @@ class Morph {
           }
         },
         // set new values for any attributes of a passed node
-        y: (( Canvas.verticalEmitter === true ? this.canvas.stage.height()  : 0)),
-        x: (( Canvas.horizontalEmitter === true ? this.canvas.stage.width() : 0)),
+        y: (( canvas.verticalEmitter === true ? canvas.stage.height()  : 0)),
+        x: (( canvas.horizontalEmitter === true ? canvas.stage.width() : 0)),
         fill: 'red'
       })
       this.tweenStorage.push(this.tween)
