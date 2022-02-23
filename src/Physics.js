@@ -20,10 +20,24 @@ class Physics extends Component {
   }
 
   componentDidMount() {
-    this.engine = Matter.Engine.create()
-    this.runner = Matter.Runner.create()
-    Matter.Runner.run(this.runner, this.engine)
-    Matter.Events.on(this.engine, 'afterUpdate', this.afterUpdate.bind(this))
+    let engine = Matter.Engine.create()
+    let runner = Matter.Runner.create()
+    let render = Matter.Render.create({
+      element: document.getElementById('physics-container'),
+      engine: engine,
+      options: {
+        showPositions: true,
+        showAngleIndicator: true,
+        width: App.size,
+        height: App.size,
+        background: '#eee',
+        wireframeBackground: 'none'
+      }
+    })
+    this.engine = engine
+    Matter.Render.run(render)
+    Matter.Runner.run(runner, engine)
+    Matter.Events.on(engine, 'afterUpdate', this.afterUpdate.bind(this))
     this.showBox()
   }
 
@@ -31,6 +45,7 @@ class Physics extends Component {
     let rect = { x: 400, y: 610, width: 810, height: 60 }
     let ground = Matter.Bodies.rectangle(rect.x, rect.y, rect.width, rect.height, { isStatic: true, mass: 10 })
     ground.id = 'ground'
+    ground.restitution = 1
     Matter.Composite.add(this.engine.world, ground)
     this.setState({ rects: [rect] })
   }
@@ -41,9 +56,17 @@ class Physics extends Component {
     if (bodyIds.includes(id)) return
     let x = node.getAttr('x')
     let y = node.getAttr('y')
-    let radius = 30 // TODO: change with bounding box
-    let body = Matter.Bodies.circle(x, y, radius, { mass: 10 })
+    let radius = node.getAttr('radius')
+    console.log(node)
+    let body = Matter.Bodies.circle(x, y, radius, {
+      render: {
+        fillStyle: 'red',
+        strokeStyle: 'red',
+        lineWidth: 1,
+      }
+    })
     body.id = id
+    body.restitution = 1
     Matter.Composite.add(this.engine.world, body)
     bodyIds.push(id)
     this.setState({ bodyIds: bodyIds })
@@ -58,7 +81,7 @@ class Physics extends Component {
     let y = body.position.y
     let degree = body.angle * 180 / Math.PI
     node.setAttrs({ x: x, y: y })
-    node.rotation(degree)
+    // node.rotation(degree)
   }
 
   afterUpdate() {
@@ -79,6 +102,8 @@ class Physics extends Component {
               y={ rect.y }
               width={ rect.width }
               height={ rect.height }
+              offsetX={ rect.width/2 }
+              offsetY={ rect.height/2 }
               stroke={ 'black' }
             />
           )

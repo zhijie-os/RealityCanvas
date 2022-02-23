@@ -46,18 +46,17 @@ class Emit extends Component {
   update(originPoint) {
     let offset = {
       x: 0,
-      y: this.state.step * (1000/this.max),
+      y: - this.state.step * (1000/this.max),
     }
     let motionLine = _.last(this.canvas.state.lines.filter(line => line.type === 'motion'))
     if (motionLine) {
       let points = motionLine.points
+      let motionOrigin = { x: points[0], y: points[1] }
       let i = Math.floor(points.length / (this.max * 2))
-      let x = points[(this.state.step * i)*2] - points[0]
-      let y = points[(this.state.step * i)*2+1] - points[1]
+      let x = points[(this.state.step * i)*2] - motionOrigin.x
+      let y = points[(this.state.step * i)*2+1] - motionOrigin.y
       offset = { x: x, y: y }
     }
-    offset.x = offset.x - this.state.elementPoints[0]
-    offset.y = offset.y - this.state.elementPoints[1]
     return {
       x: originPoint.x + offset.x + Math.random() * 30,
       y: originPoint.y + offset.y + Math.random() * 30

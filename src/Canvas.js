@@ -9,6 +9,8 @@ import Physics from './Physics'
 window.Konva = Konva
 let currentShape
 
+let debug = false
+
 class Canvas extends Component {
   constructor(props) {
     super(props)
@@ -42,8 +44,21 @@ class Canvas extends Component {
     if (this.state.currentPoints.length === 0) return false
     let lines = this.state.lines
     let physics = (this.state.isPhysics && this.state.mode === 'drawing')
+    let points = this.state.currentPoints
+    let node = new Konva.Line({ points: points })
+    let bb = node.getClientRect()
+    let x = 0, y = 0, radius = Math.min(bb.width, bb.height)
+    if (this.state.mode !== 'emitter') {
+      x = bb.x + bb.width/2
+      y = bb.y + bb.height/2
+      points = points.map((num, i) => {
+        return (i % 2 === 0) ? num - x : num - y
+      })
+    }
     lines.push({
-      points: this.state.currentPoints,
+      x: x, y: y,
+      radius: radius,
+      points: points,
       type: this.state.mode,
       physics: physics,
     })
@@ -86,32 +101,38 @@ class Canvas extends Component {
           </button>
           <input name="isGoing" type="checkbox" checked={this.state.isPhysics} onChange={this.enablePhysics.bind(this)} />Enable Physics
         </div>
-        <Stage width={ App.size } height={ App.size }>
-          <Layer ref={ ref => (this.layer = ref) }>
-            <Line
-              points={ this.state.currentPoints }
-              stroke={ 'black' }
-            />
-            { this.state.lines.map((line, i) => {
-                return (
-                  <Line
-                    key={ i }
-                    id={ `line-${i}` }
-                    name={ `line-${i}` }
-                    physics={ line.physics }
-                    points={ line.points }
-                    stroke={ this.color(line.type) }
-                  />
-                )
-            })}
-            <Emit
-              canvas={ this }
-            />
-            <Physics
-              canvas={ this }
-            />
-          </Layer>
-        </Stage>
+        <div style={{ display: debug ? 'block' : 'none' }}>
+          <div id="physics-container"></div>
+          <Stage width={ App.size } height={ App.size }>
+            <Layer ref={ ref => (this.layer = ref) }>
+              <Line
+                points={ this.state.currentPoints }
+                stroke={ 'black' }
+              />
+              { this.state.lines.map((line, i) => {
+                  return (
+                    <Line
+                      key={ i }
+                      id={ `line-${i}` }
+                      name={ `line-${i}` }
+                      physics={ line.physics }
+                      x={ line.x }
+                      y={ line.y }
+                      radius={ line.radius }
+                      points={ line.points }
+                      stroke={ this.color(line.type) }
+                    />
+                  )
+              })}
+              <Emit
+                canvas={ this }
+              />
+              <Physics
+                canvas={ this }
+              />
+            </Layer>
+          </Stage>
+        </div>
       </>
     )
   }

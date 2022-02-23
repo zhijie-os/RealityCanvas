@@ -1,5 +1,12 @@
 .konvajs-content {
-  display: none;
+  /*display: none;*/
+}
+
+#physics-container {
+  width: 30px;
+  height: 30px;
+  position: fixed;
+  background: #eee;
 }
 
 
