@@ -7,9 +7,9 @@ const App = () => {
   window.App = this
 
   return (
-    <div>
+    <>
       <Aframe />
-    </div>
+    </>
   )
 }
 

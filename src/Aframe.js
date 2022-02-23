@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-
 import Canvas from './Canvas'
 import Event from './Event'
+
+import AFRAME from 'aframe'
+
 
 class Aframe extends Component {
   constructor(props) {
@@ -13,16 +15,16 @@ class Aframe extends Component {
   componentDidMount() {
 
     AFRAME.registerComponent('startButton', {
- init: function () {
-    var cube = document.querySelector("#boxId");
-    cube.addEventListener("mousedown",function(evt){
-        cube.setAttribute('material', 'color',"red");
+     init: function () {
+        var cube = document.querySelector("#boxId");
+        cube.addEventListener("mousedown",function(evt){
+          cube.setAttribute('material', 'color',"red");
+        });
+        cube.addEventListener("mouseup",function(evt){
+          cube.setAttribute('material', 'color',"blue");
+        });
+     }
     });
-    cube.addEventListener("mouseup",function(evt){
-        cube.setAttribute('material', 'color',"blue");
-    });
- }
-});
     
     AFRAME.registerComponent('drawable', {
       init: function() {
@@ -61,11 +63,13 @@ class Aframe extends Component {
         this.internalState.positionRaw = event.detail.positionRaw
         this.internalState.dragging = true
       },
+
       fingerUp(event) {
         this.internalState.dragging = false
         this.internalState.initDrawing = true
         this.event.mouseUp()
       },
+
       tick: function() {
         this.mesh.material.map.needsUpdate = true
         if (this.internalState.dragging) {
@@ -105,6 +109,32 @@ class Aframe extends Component {
       
       <>
         <Canvas />
+        <a-scene>
+          <a-camera
+            id="camera"
+            position="0 8 0"
+            raycaster="objects: .cantap"
+            cursor="
+              fuse: false;
+              rayOrigin: mouse;"
+          >
+           </a-camera>
+
+          <a-plane
+            id="plane"
+            drawable
+            class="cantap"
+            position="0 5 -10"
+            rotation="0 0 0"
+            width="10"
+            height="10"
+            color="#7BC8A4"
+            shadow
+          >
+          </a-plane>
+
+        </a-scene>
+
       </>
     )
   }
