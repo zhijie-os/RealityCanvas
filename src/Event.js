@@ -5,6 +5,7 @@ class Event {
   }
 
   mouseDown(pos) {
+    console.log('mousedown')
     this.isPaint = true
     this.lastLine = new Konva.Line({
       stroke: (this.canvas.drawingMode === 'emitterLine') ? 'blue' : 'red',
@@ -22,13 +23,10 @@ class Event {
 
   mouseMove(pos) {
     if (!this.isPaint) return
-    if(this.canvas.drawingMode === 'emitterLine') {
-      let newPoints = this.lastLine.points().concat([pos.x, pos.y])
-      this.lastLine.points(newPoints)
-    } else {
-      let newPoints = this.lastLine.points().concat([pos.x, pos.y])
-      this.lastLine.points(newPoints)
-    }
+    let points = this.lastLine.points()
+    if (points[points.length-2] === pos.x && points[points.length-1] === pos.y) return
+    let newPoints = points.concat([pos.x, pos.y])
+    this.lastLine.points(newPoints)
   }
 
   mouseUp(pos) {
@@ -43,4 +41,3 @@ class Event {
 }
 
 export default Event
-
