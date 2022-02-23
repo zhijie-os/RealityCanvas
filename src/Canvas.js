@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Stage, Layer, Rect, Text, Line } from 'react-konva'
 import _ from 'lodash'
 import Konva from 'konva'
 import Emit from './Emit'
@@ -19,6 +20,7 @@ class Canvas extends Component {
       lastLine: null,
       ball: null,
       line: null,
+      lines: []
     }
     this.event = new Event(this)
     this.emit = new Emit(this)
@@ -26,25 +28,45 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
-    this.stage = new Konva.Stage({
-      container: 'konva',
-      width: 1024,
-      height: 1024
-    })
-    this.layer = new Konva.Layer()
-    this.layer.getCanvas()._canvas.id = 'konva-1'
-    this.stage.add(this.layer)
+    // this.numberOfLines = 0
+    // this.drawingMode = "animateLines"
+    // this.emitterLinePointsCopy = []
 
-    this.numberOfLines = 0
-    this.drawingMode = "animateLines"
-    this.emitterLinePointsCopy = []
-
-    this.normalAnimation = true
-    this.loopAnimation = false
-    this.verticalEmitter = false
-    this.horizontalEmitter = false
+    // this.normalAnimation = true
+    // this.loopAnimation = false
+    // this.verticalEmitter = false
+    // this.horizontalEmitter = false
   }
-  
+
+  mouseDown(pos) {
+    this.isPaint = true
+    let lines = this.state.lines
+    lines.push({
+      points: [pos.x, pos.y, pos.x, pos.y]
+    })
+    this.setState({ lines: lines })
+  }
+
+  mouseMove(pos) {
+    if (!this.isPaint) return false
+    let lines = this.state.lines
+    let current = _.last(lines)
+    let points = current.points
+    if (points[points.length-2] === pos.x && points[points.length-1] === pos.y) return false
+    current.points = points.concat([pos.x, pos.y])
+    lines[lines.length-1] = current
+    console.log(lines)
+    this.setState({ lines: lines })
+  }
+
+  mouseUp(pos) {
+    this.isPaint = false
+    // this.canvas.setState({ lastLine: this.lastLine })
+    // if(this.canvas.drawingMode === 'emitterLine') {
+    //   this.canvas.emitterLinePointsCopy.push(pos.x, pos.y)
+    // }
+  }
+
   addPhysics() {
     let points = this.state.lastLine.points()
     let data = []
@@ -175,27 +197,38 @@ class Canvas extends Component {
           <button id = "animateButton" onClick={this.animateLines.bind(this)}>
             Animate
           </button>
-
           <button id = "motionLineButton" onClick={this.motionLine.bind(this)}>
             Motion Line
           </button>
-
           <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine.bind(this)}>
             Vertical Emitter Line
           </button>
-
           <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal.bind(this)}>
               Horizontal Emitter Line
           </button>
-
           <button id = "motionPath" onClick={this.motionPathLine.bind(this)}>
               Motion Path
           </button>
         </div>
 
-        <div id="workarea">
+
+        <Stage width={ App.size } height={ App.size }>
+          <Layer>
+            <Text text="Try click on rect" />
+            { this.state.lines.map((line, i) => {
+              return (
+                <Line
+                  key={ i }
+                  points={ line.points }
+                  stroke={ 'red' }
+                />
+              )
+            })}
+          </Layer>
+        </Stage>
+        {/*<div id="workarea">
           <div id="konva" className="svgcanvas" style={{ position: 'relative' }}></div>
-        </div>
+        </div>*/}
       </>
     )
   }

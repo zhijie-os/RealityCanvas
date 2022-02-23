@@ -27,7 +27,7 @@ class App extends Component {
       init: () => {
         let el = document.querySelector('#drawing-plane')
         let mesh = el.object3D.children[0]
-        let konvaEl = document.getElementById('konva-1')
+        let konvaEl = document.querySelector('.konvajs-content canvas')
         konvaEl.width = konvaEl.height = this.size
         let texture = new THREE.Texture(konvaEl)
         let material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
@@ -57,7 +57,7 @@ class App extends Component {
 
   mouseUp(event) {
     this.setState({ dragging: false, initDrawing: true })
-    this.canvas.event.mouseUp()
+    this.canvas.mouseUp()
   }
 
   update() {
@@ -80,10 +80,10 @@ class App extends Component {
         }
         this.setState({ distance: intersect.distance, mouse: mouse })
         if (this.state.initDrawing) {
-          this.canvas.event.mouseDown(mouse)
+          this.canvas.mouseDown(mouse)
           this.setState({ initDrawing: false })
         } else {
-          this.canvas.event.mouseMove(mouse)
+          this.canvas.mouseMove(mouse)
         }
       }
     }

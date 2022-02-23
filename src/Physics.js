@@ -25,8 +25,8 @@ class Physics {
       options: {
         showPositions: true,
         showAngleIndicator: true,
-        width: 2000,
-        height: 2000,
+        width: App.size,
+        height: App.size,
         background: 'none',
         wireframeBackground: 'none'
       }
