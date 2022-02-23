@@ -8,9 +8,10 @@ class Emit extends Component {
     window.emit = this
     this.canvas = props.canvas
     this.canvas.emit = this
+    this.max = 10
     this.state = {
       step: 0,
-      emitPoints: [],
+      originPoints: [],
       elementPoints: []
     }
   }
@@ -18,7 +19,7 @@ class Emit extends Component {
   componentDidMount() {
     setInterval(() => {
       let step = this.state.step + 1
-      if (step > 100) step = 0
+      if (step > this.max) step = 0
       this.setState({ step: step })
     }, 100)
   }
@@ -29,58 +30,50 @@ class Emit extends Component {
     if (!emitterLine) return false
 
     let points = emitterLine.points
-    let emitPoints = []
+    let originPoints = []
     for (let i = 0; i < points.length; i = i + 2) {
       let x = points[i]
       let y = points[i+1]
-      emitPoints.push({ x: x, y: y })
+      originPoints.push({ x: x, y: y })
     }
 
     let drawingLines = this.canvas.state.lines.filter(line => line.type === 'drawing')
     if (drawingLines.length === 0) return false
     let elementPoints = drawingLines[0].points
-    this.setState({ emitPoints: emitPoints, elementPoints: elementPoints })
-
-    let step = 0
-    let max = 10
-    setInterval(() => {
-      this.update(emitPoints, step, max)
-      step++
-      if (step > max) step = 0
-    }, 100)
+    this.setState({ originPoints: originPoints, elementPoints: elementPoints })
   }
 
-  update(originPoints, step, max) {
+  update(originPoint) {
     let offset = {
       x: 0,
-      y: step * (1000/max),
+      y: this.state.step * (1000/this.max),
     }
     let motionLine = _.last(this.canvas.state.lines.filter(line => line.type === 'motion'))
     if (motionLine) {
       let points = motionLine.points
-      let i = Math.floor(points.length / (max * 2))
-      let x = points[(step * i)*2] - points[0]
-      let y = points[(step * i)*2+1] - points[1]
+      let i = Math.floor(points.length / (this.max * 2))
+      let x = points[(this.state.step * i)*2] - points[0]
+      let y = points[(this.state.step * i)*2+1] - points[1]
       offset = { x: x, y: y }
     }
-    let newEmitPoints = originPoints.map((originPoint) => {
-      return {
-        x: originPoint.x + offset.x + Math.random() * 30,
-        y: originPoint.y + offset.y + Math.random() * 30
-      }
-    })
-    this.setState({ emitPoints: newEmitPoints })
+    offset.x = offset.x - this.state.elementPoints[0]
+    offset.y = offset.y - this.state.elementPoints[1]
+    return {
+      x: originPoint.x + offset.x + Math.random() * 30,
+      y: originPoint.y + offset.y + Math.random() * 30
+    }
   }
 
   render() {
     return (
       <>
-        { this.state.emitPoints.map((point, i) => {
+        { this.state.originPoints.map((originPoint, i) => {
+          let pos = this.update(originPoint)
           return (
             <Line
               key={ i }
-              x={ point.x - this.state.elementPoints[0] }
-              y={ point.y - this.state.elementPoints[1]}
+              x={ pos.x }
+              y={ pos.y }
               points={ this.state.elementPoints }
               stroke={ 'green' }
             />

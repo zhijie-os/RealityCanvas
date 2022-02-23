@@ -29,8 +29,9 @@ class Physics extends Component {
 
   showBox() {
     let rect = { x: 400, y: 610, width: 810, height: 60 }
-    let ground = Matter.Bodies.rectangle(rect.x, rect.y, rect.width, rect.height, { isStatic: true })
-    Matter.Composite.add(this.engine.world, [ground])
+    let ground = Matter.Bodies.rectangle(rect.x, rect.y, rect.width, rect.height, { isStatic: true, mass: 10 })
+    ground.id = 'ground'
+    Matter.Composite.add(this.engine.world, ground)
     this.setState({ rects: [rect] })
   }
 
@@ -40,8 +41,9 @@ class Physics extends Component {
     if (bodyIds.includes(id)) return
     let x = node.getAttr('x')
     let y = node.getAttr('y')
-    let radius = 100 // TODO: change with bounding box
-    let body = Matter.Bodies.circle(x, y, radius)
+    let radius = 30 // TODO: change with bounding box
+    let body = Matter.Bodies.circle(x, y, radius, { mass: 10 })
+    body.id = id
     Matter.Composite.add(this.engine.world, body)
     bodyIds.push(id)
     this.setState({ bodyIds: bodyIds })
@@ -49,7 +51,9 @@ class Physics extends Component {
 
   applyPhysics(node) {
     this.addBody(node)
-    let body = this.engine.world.bodies[1] // TODO: change this index
+    let id = node.getAttr('id')
+    let index = this.engine.world.bodies.map(b => b.id).indexOf(id)
+    let body = this.engine.world.bodies[index]
     let x = body.position.x
     let y = body.position.y
     let degree = body.angle * 180 / Math.PI

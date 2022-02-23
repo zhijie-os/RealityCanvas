@@ -18,6 +18,7 @@ class Canvas extends Component {
       mode: 'drawing',
       lines: [],
       currentPoints: [],
+      isPhysics: true
     }
   }
 
@@ -40,10 +41,11 @@ class Canvas extends Component {
     this.setState({ isPaint: false })
     if (this.state.currentPoints.length === 0) return false
     let lines = this.state.lines
+    let physics = (this.state.isPhysics && this.state.mode === 'drawing')
     lines.push({
       points: this.state.currentPoints,
       type: this.state.mode,
-      physics: true
+      physics: physics,
     })
     this.setState({ lines: lines, currentPoints: [] })
     if (this.state.mode === 'emitter') {
@@ -62,6 +64,10 @@ class Canvas extends Component {
     return 'black'
   }
 
+  enablePhysics() {
+    this.setState({ isPhysics: !this.state.isPhysics })
+  }
+
   render() {
     return (
       <>
@@ -78,6 +84,7 @@ class Canvas extends Component {
           <button onClick={ this.changeMode.bind(this, 'emitter') }>
             Emitter Line
           </button>
+          <input name="isGoing" type="checkbox" checked={this.state.isPhysics} onChange={this.enablePhysics.bind(this)} />Enable Physics
         </div>
         <Stage width={ App.size } height={ App.size }>
           <Layer ref={ ref => (this.layer = ref) }>

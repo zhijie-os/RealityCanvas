@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
-import AFRAME from 'aframe'
 import Canvas from './Canvas'
 import './App.css'
+
+if (!window.XR8) {
+  AFRAME = require('aframe')
+}
 
 class App extends Component {
   constructor(props) {
@@ -17,6 +20,7 @@ class App extends Component {
       mouse2D: { x: 0, y: 0 },
       mouse: { x: 0, y: 0 },
       raycaster: new THREE.Raycaster(),
+      XR8: window.XR8
     }
   }
 
@@ -93,7 +97,14 @@ class App extends Component {
     return (
       <>
         <Canvas />
-        <a-scene>
+        <a-scene
+          xrextras-almost-there
+          xrextras-loading
+          xrextras-runtime-error
+          renderer="colorManagement:true"
+          xrweb="allowedDevices:any;"
+          xrextras-gesture-detector
+        >
           <a-camera id="camera" look-controls="false" position="0 8 0" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
           <a-plane drawing-plane id="drawing-plane" class="cantap" position="0 5 -10" rotation="0 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
         </a-scene>
