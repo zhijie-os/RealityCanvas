@@ -1,6 +1,6 @@
-class Morph {
-  constructor() {
-    this.canvas = window.Canvas
+class Emit {
+  constructor(canvas) {
+    this.canvas = canvas
     this.tween = null
     this.animatedLineStorage = null
     this.tweenStorage = []
@@ -80,4 +80,4 @@ class Morph {
 
 }
 
-export default Morph
+export default Emit

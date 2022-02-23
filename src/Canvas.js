@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 import Konva from 'konva'
-import Morph from './Morph'
+import Emit from './Emit'
 import Event from './Event'
+import Physics from './Physics'
 
 window.Konva = Konva
 let currentShape
@@ -10,6 +11,8 @@ let currentShape
 class Canvas extends Component {
   constructor(props) {
     super(props)
+    window.Canvas = this
+    window.canvas = this
 
     this.state = {
       num: 0,
@@ -17,11 +20,12 @@ class Canvas extends Component {
       ball: null,
       line: null,
     }
+    this.event = new Event(this)
+    this.emit = new Emit(this)
+    this.physics = new Physics(this)
   }
 
   componentDidMount() {
-    window.Canvas = this
-
     this.stage = new Konva.Stage({
       container: 'konva',
       width: 1024,
@@ -35,13 +39,44 @@ class Canvas extends Component {
     this.drawingMode = "animateLines"
     this.emitterLinePointsCopy = []
 
-    this.morph = new Morph()
     this.normalAnimation = true
     this.loopAnimation = false
     this.verticalEmitter = false
     this.horizontalEmitter = false
   }
   
+  addPhysics() {
+    let points = this.state.lastLine.points()
+    let data = []
+    for (let i = 0; i < points.length; i = i + 2) {
+      let x = points[i]
+      let y = points[i+1]
+      data.push({ x: x, y: y })
+    }
+    // data = _.uniqBy(data, 'x', 'y')
+    console.log(data)
+
+    let path = new Konva.Path({
+      x: 0,
+      y: 0,
+      strokeWidth: 5,
+      stroke: 'red'
+    });
+    this.layer.add(path)
+    let p = "M" + data[0].x + " " + data[0].y
+    for (let i = 1; i < data.length; i++) {
+      p = p + " L" + data[i].x + " " + data[i].y
+    }
+    path.setData(p)
+    window.path = path
+    console.log(path)
+    path.id(`hoge-${Date.now()}`)
+    this.path = path
+    // this.physics.addBody(path)
+    this.physics.addBodyApprox(path)
+    this.state.lastLine.remove()
+  }
+
   animate() {
     let points = this.state.lastLine.points()
     let data = []
@@ -56,7 +91,8 @@ class Canvas extends Component {
     let path = new Konva.Path({
       x: 0,
       y: 0,
-      stroke: 'pink'
+      strokeWidth: 5,
+      stroke: 'red'
     });
     this.layer.add(path)
     let p = "M" + data[0].x + " " + data[0].y
@@ -111,8 +147,7 @@ class Canvas extends Component {
     this.normalAnimation = true
     this.loopAnimation = false
     //this.emitterLinePointsCopy =  this.event.emitterLinePoints
-      
-    this.morph.animate()
+    this.emit.animate()
   }
   
   spawnFromEmitterLine(e) {

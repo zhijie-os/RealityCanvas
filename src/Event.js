@@ -1,6 +1,6 @@
 class Event {
-  constructor() {
-    this.canvas = window.Canvas
+  constructor(canvas) {
+    this.canvas = canvas
     this.isPaint = false
   }
 
