@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import Konva from 'konva'
+import Morph from './Morph'
+import Event from './Event'
 
 window.Konva = Konva
 let currentShape
@@ -41,12 +43,7 @@ class Canvas extends Component {
     this.drawingMode = "animateLines"
     this.emitterLinePointsCopy = []
 
-    // this.physics = new Physics()
-    // this.contextMenu = new ContextMenu()
-    // this.parameterize = new Parameterize()
-    // this.graph = new Graph()
-    // this.morph = new Morph()
-    // this.event = new Event()
+    this.morph = new Morph()
     this.normalAnimation = true
     this.loopAnimation = false
     this.verticalEmitter = false
@@ -89,9 +86,7 @@ class Canvas extends Component {
       fill: 'red'
     })
     this.layer.add(this.circle)
-
   }
-
   
   animateLines(e) {
     this.drawingMode = "animateLines"
@@ -103,28 +98,24 @@ class Canvas extends Component {
   }
   
   spawnFromEmitterLine(e) {
-      this.drawingMode = "emitterLine"
+    this.drawingMode = "emitterLine"
     this.verticalEmitter = true
     this.horizontalEmitter = false
   }
   
-    spawnFromEmitterLineHorizontal(e) {
-      this.drawingMode = "emitterLine"
-      
-          this.verticalEmitter = false
+  spawnFromEmitterLineHorizontal(e) {
+    this.drawingMode = "emitterLine"
+    this.verticalEmitter = false
     this.horizontalEmitter = true
   }
   
-  motionPathLine(e)
-  {
-      this.drawingMode = "emitterLine"
-      
-          this.verticalEmitter = true
+  motionPathLine(e) {
+    this.drawingMode = "emitterLine"
+    this.verticalEmitter = true
     this.horizontalEmitter = true 
   }
   
-  generateRandomIndex()
-  {
+  generateRandomIndex() {
     this.randomIndex = Math.floor( Math.random() * this.emitterLinePointsCopy.length / 2 ) * 2
     console.log("random index", this.randomIndex)
     return this.randomIndex
@@ -135,11 +126,11 @@ class Canvas extends Component {
       <>
         <div style={{position: 'fixed', top: '10px', width:'100%', textAlign: 'center', zIndex: 1}}>
           <button id = "animateButton" onClick={this.animateLines}>
-              Animate
+            Animate
           </button>
 
           <button id = "emitterLineButton" onClick={this.spawnFromEmitterLine}>
-              Vertical Emitter Line
+            Vertical Emitter Line
           </button>
 
           <button id = "emitterLineButtonHorizontal" onClick={this.spawnFromEmitterLineHorizontal}>

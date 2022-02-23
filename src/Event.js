@@ -1,8 +1,6 @@
 class Event {
-
   constructor() {
     this.canvas = window.Canvas
-    this.lineLayer = this.canvas.lineLayer
     this.isPaint = false
   }
 
@@ -25,8 +23,6 @@ class Event {
   mouseMove(pos) {
     if (!this.isPaint) return
     if(this.canvas.drawingMode === 'emitterLine') {
-      console.log('in emitter line')
-      this.canvas.emitterLinePointsCopy.push(pos.x, pos.y)
       let newPoints = this.lastLine.points().concat([pos.x, pos.y])
       this.lastLine.points(newPoints)
     } else {
@@ -39,9 +35,9 @@ class Event {
     if (!this.isPaint) return
     this.isPaint = false
     this.canvas.setState({ lastLine: this.lastLine })
-    if(this.canvas.drawingMode === 'emitterLine') {
-      this.canvas.emitterLinePointsCopy.push(pos.x, pos.y)
-    }
+    // if(this.canvas.drawingMode === 'emitterLine') {
+    //   this.canvas.emitterLinePointsCopy.push(pos.x, pos.y)
+    // }
   }
 
 }
