@@ -37,14 +37,15 @@ class Canvas extends Component {
   }
 
   mouseUp(pos) {
+    this.setState({ isPaint: false })
+    if (this.state.currentPoints.length === 0) return false
     let lines = this.state.lines
-    if (this.state.currentPoints.length > 0) {
-      lines.push({
-        points: this.state.currentPoints,
-        type: this.state.mode
-      })
-    }
-    this.setState({ isPaint: false, lines: lines, currentPoints: [] })
+    lines.push({
+      points: this.state.currentPoints,
+      type: this.state.mode,
+      physics: true
+    })
+    this.setState({ lines: lines, currentPoints: [] })
     if (this.state.mode === 'emitter') {
       this.emit.start()
     }
@@ -78,26 +79,30 @@ class Canvas extends Component {
             Emitter Line
           </button>
         </div>
-
         <Stage width={ App.size } height={ App.size }>
-          <Layer>
-            <Text text="Try click on rect" />
+          <Layer ref={ ref => (this.layer = ref) }>
             <Line
               points={ this.state.currentPoints }
               stroke={ 'black' }
-            />
-            <Emit
-              canvas={ this }
             />
             { this.state.lines.map((line, i) => {
                 return (
                   <Line
                     key={ i }
+                    id={ `line-${i}` }
+                    name={ `line-${i}` }
+                    physics={ line.physics }
                     points={ line.points }
                     stroke={ this.color(line.type) }
                   />
                 )
             })}
+            <Emit
+              canvas={ this }
+            />
+            <Physics
+              canvas={ this }
+            />
           </Layer>
         </Stage>
       </>

@@ -72,7 +72,6 @@ class Emit extends Component {
     this.setState({ emitPoints: newEmitPoints })
   }
 
-
   render() {
     return (
       <>
