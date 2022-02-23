@@ -33,12 +33,7 @@ class Canvas extends Component {
     })
     this.layer = new Konva.Layer()
     this.layer.getCanvas()._canvas.id = 'konva-1'
-    this.lineLayer = new Konva.Layer()
-    this.lineLayer.getCanvas()._canvas.id = 'konva-2'
-    this.graphLayer = new Konva.Layer()
     this.stage.add(this.layer)
-    this.stage.add(this.lineLayer)
-    this.stage.add(this.graphLayer)
     this.numberOfLines = 0
     this.drawingMode = "animateLines"
     this.emitterLinePointsCopy = []
@@ -48,44 +43,6 @@ class Canvas extends Component {
     this.loopAnimation = false
     this.verticalEmitter = false
     this.horizontalEmitter = false
-
-    this.stage.on('contextmenu', (e) => {
-      // this.contextMenu.show(e)
-    })
-    this.stage.on('mousedown touchstart', (e) => {
-      this.event.mouseDown(e)
-    })
-    this.stage.on('mousemove touchmove', (e) => {
-      this.event.mouseMove(e)
-    })
-    this.stage.on('mouseup touchend', (e) => {
-      this.event.mouseUp(e)
-    })
-    this.layer.on('dragmove', (e) => {
-      this.event.dragMove(e)
-    })
-    this.layer.on('dragend', (e) => {
-      this.event.dragEnd(e)
-    })
-    
-    this.background = new Konva.Rect({
-      x: 0,
-      y: 0,
-      width: this.stage.width(),
-      height: this.stage.height(),
-      listening: false,
-      fill: 'white',
-      opacity: 0.1,
-    });
-    this.layer.add(this.background);
-
-    this.circle = new Konva.Circle({
-      x: 0,
-      y: 0,
-      radius: 10,
-      fill: 'red'
-    })
-    this.layer.add(this.circle)
   }
   
   animateLines(e) {
