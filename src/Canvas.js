@@ -3,12 +3,9 @@ import { Stage, Layer, Rect, Text, Line } from 'react-konva'
 import Konva from 'konva'
 import _ from 'lodash'
 import Emit from './Emit'
-import Event from './Event'
 import Physics from './Physics'
 
 window.Konva = Konva
-let currentShape
-
 let debug = false
 
 class Canvas extends Component {
