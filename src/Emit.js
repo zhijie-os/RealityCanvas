@@ -71,6 +71,10 @@ class Emit extends Component {
           return (
             <Line
               key={ i }
+              id={ `emitted-${i}` }
+              name={ `emitted-${i}` }
+              physics={ this.canvas.state.isPhysics }
+              originPoint={ originPoint }
               x={ pos.x }
               y={ pos.y }
               points={ this.state.elementPoints }

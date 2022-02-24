@@ -13,7 +13,9 @@ class Physics extends Component {
 
     this.canvas = props.canvas
     this.canvas.physics = this
+    this.max = 30
     this.state = {
+      step: 0,
       rects: [],
       bodyIds: []
     }
@@ -35,10 +37,15 @@ class Physics extends Component {
       }
     })
     this.engine = engine
+    this.runner = runner
     Matter.Render.run(render)
     Matter.Runner.run(runner, engine)
     Matter.Events.on(engine, 'afterUpdate', this.afterUpdate.bind(this))
     this.showBox()
+
+    setInterval(() => {
+      this.setState({ step: this.state.step + 1 })
+    }, 100)
   }
 
   showBox() {
@@ -56,8 +63,7 @@ class Physics extends Component {
     if (bodyIds.includes(id)) return
     let x = node.getAttr('x')
     let y = node.getAttr('y')
-    let radius = node.getAttr('radius')
-    console.log(node)
+    let radius = node.getAttr('radius') || 20
     let body = Matter.Bodies.circle(x, y, radius, {
       render: {
         fillStyle: 'red',
@@ -72,22 +78,38 @@ class Physics extends Component {
     this.setState({ bodyIds: bodyIds })
   }
 
-  applyPhysics(node) {
+  applyPhysics(node, reset) {
     this.addBody(node)
     let id = node.getAttr('id')
     let index = this.engine.world.bodies.map(b => b.id).indexOf(id)
     let body = this.engine.world.bodies[index]
+    let originPoint = node.getAttr('originPoint') || { x: 0, y: 0 }
     let x = body.position.x
     let y = body.position.y
     let degree = body.angle * 180 / Math.PI
     node.setAttrs({ x: x, y: y })
-    // node.rotation(degree)
+    node.rotation(degree)
+
+    if (reset) {
+      console.log('reset')
+      let bodyIds = this.state.bodyIds
+      _.pull(bodyIds, id)
+      _.pullAt(this.engine.world.bodies, [index])
+      this.setState({ bodyIds: bodyIds })
+      node.setAttrs({ x: originPoint.x, y: originPoint.y })
+    }
+
   }
 
   afterUpdate() {
+    let reset = false
+    if (this.state.step > this.max) {
+      reset = true
+      this.setState({ step: 0 })
+    }
     for (let node of this.canvas.layer.children) {
       if (!node.getAttr('physics')) continue
-      this.applyPhysics(node)
+      this.applyPhysics(node, reset)
     }
   }
 
