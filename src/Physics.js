@@ -49,7 +49,7 @@ class Physics extends Component {
   }
 
   showBox() {
-    let rect = { x: 400, y: 610, width: 810, height: 60 }
+    let rect = { x: 400, y: 810, width: 810, height: 60 }
     let ground = Matter.Bodies.rectangle(rect.x, rect.y, rect.width, rect.height, { isStatic: true, mass: 10 })
     ground.id = 'ground'
     ground.restitution = 1
@@ -89,7 +89,6 @@ class Physics extends Component {
     let degree = body.angle * 180 / Math.PI
     node.setAttrs({ x: x, y: y })
     node.rotation(degree)
-
     if (reset) {
       console.log('reset')
       let bodyIds = this.state.bodyIds
@@ -98,7 +97,6 @@ class Physics extends Component {
       this.setState({ bodyIds: bodyIds })
       node.setAttrs({ x: originPoint.x, y: originPoint.y })
     }
-
   }
 
   afterUpdate() {

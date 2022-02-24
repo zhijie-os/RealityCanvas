@@ -9,7 +9,7 @@ import Physics from './Physics'
 window.Konva = Konva
 let currentShape
 
-let debug = true
+let debug = false
 
 class Canvas extends Component {
   constructor(props) {
