@@ -1,6 +1,7 @@
 {
   "name": "draco-ar",
   "version": "0.1.0",
+  "homepage": "https://ryosuzuki.github.io/draco-ar",
   "private": true,
   "dependencies": {
     "aframe": "1.2.0",
