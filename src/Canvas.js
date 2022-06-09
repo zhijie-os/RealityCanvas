@@ -46,7 +46,7 @@ class Canvas extends Component {
     let bb = node.getClientRect()
     let x = 0, y = 0, radius = Math.min(bb.width, bb.height)
     if (this.state.mode !== 'emitter') {
-      x = bb.x + bb.width/2
+      // x = bb.x + bb.width/2
       y = bb.y + bb.height/2
       points = points.map((num, i) => {
         return (i % 2 === 0) ? num - x : num - y

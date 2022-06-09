@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 build
 **/**/.DS_Store
 
+=======
+>>>>>>> Initial commit
 # Logs
 logs
 *.log
@@ -83,7 +86,11 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
+<<<<<<< HEAD
 # dist
+=======
+dist
+>>>>>>> Initial commit
 
 # Gatsby files
 .cache/
