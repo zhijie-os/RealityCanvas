@@ -41,8 +41,11 @@ class App extends Component {
         el.sceneEl.addEventListener('mousedown', this.mouseDown.bind(this))
         el.sceneEl.addEventListener('mousemove', this.mouseMove.bind(this))
         el.sceneEl.addEventListener('mouseup', this.mouseUp.bind(this))
-        el.sceneEl.addEventListener('onefingermove', this.mouseMove.bind(this))
-        el.sceneEl.addEventListener('onefingerend', this.mouseUp.bind(this))
+
+        // this part work, event handlers are actived, but no drawing
+        el.sceneEl.addEventListener('touchstart', this.mouseDown.bind(this))
+        el.sceneEl.addEventListener('touchmove', this.mouseMove.bind(this))
+        el.sceneEl.addEventListener('touchend', this.mouseUp.bind(this))
       },
 
       tick: () => {
@@ -55,7 +58,16 @@ class App extends Component {
   }
 
   mouseMove(event) {
-    let mouse2D = { x: event.clientX, y: event.clientY }
+    // alert(JSON.stringify(event.touches[0]))
+    let mouse2D;
+    if(event.clientX){
+      mouse2D= { x: event.clientX, y: event.clientY }
+    }
+    else {
+      mouse2D={x:event.touches[0].clientX, y:event.touches[0].clientY}
+    }
+
+    // alert(JSON.stringify(event));
     this.setState({ mouse2D: mouse2D })
   }
 
@@ -73,8 +85,11 @@ class App extends Component {
 
       let camera = document.getElementById('camera')
       let threeCamera = camera.getObject3D('camera')
+      
       this.state.raycaster.setFromCamera(screenPosition, threeCamera)
       const intersects = this.state.raycaster.intersectObject(this.mesh, true)
+
+    
       if (intersects.length > 0) {
         const intersect = intersects[0]
         let point = intersect.point
