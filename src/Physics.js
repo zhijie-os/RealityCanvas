@@ -57,7 +57,7 @@ class Physics extends Component {
     this.setState({ rects: [rect] })
   }
 
-  addBody(node, options={}) {
+  addBody(node, options = {}) {
     let id = node.getAttr('id')
     let bodyIds = this.state.bodyIds
     if (bodyIds.includes(id)) return
@@ -114,17 +114,17 @@ class Physics extends Component {
   render() {
     return (
       <>
-        { this.state.rects.map((rect, i) => {
+        {this.state.rects.map((rect, i) => {
           return (
             <Rect
-              key={ i }
-              x={ rect.x }
-              y={ rect.y }
-              width={ rect.width }
-              height={ rect.height }
-              offsetX={ rect.width/2 }
-              offsetY={ rect.height/2 }
-              stroke={ 'black' }
+              key={i}
+              x={rect.x}
+              y={rect.y}
+              width={rect.width}
+              height={rect.height}
+              offsetX={rect.width / 2}
+              offsetY={rect.height / 2}
+              stroke={'black'}
             />
           )
         })}

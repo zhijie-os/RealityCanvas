@@ -17,7 +17,7 @@ class Canvas extends Component {
       mode: 'drawing',
       lines: [],
       currentPoints: [],
-      isPhysics: true
+      isPhysics: true,
     }
   }
 
@@ -25,13 +25,21 @@ class Canvas extends Component {
   }
 
   mouseDown(pos) {
+
     this.setState({ isPaint: true, currentPoints: [pos.x, pos.y, pos.x, pos.y] })
   }
 
   mouseMove(pos) {
+
     if (!this.state.isPaint) return false
+
+    // set currentPoint
     let points = this.state.currentPoints
-    if (points[points.length-2] === pos.x && points[points.length-1] === pos.y) return false
+
+    if (points[points.length - 2] === pos.x
+      && points[points.length - 1] === pos.y)
+      return false
+
     points = points.concat([pos.x, pos.y])
     this.setState({ currentPoints: points })
   }
@@ -47,7 +55,7 @@ class Canvas extends Component {
     let x = 0, y = 0, radius = Math.min(bb.width, bb.height)
     if (this.state.mode !== 'emitter') {
       // x = bb.x + bb.width/2
-      y = bb.y + bb.height/2
+      y = bb.y + bb.height / 2
       points = points.map((num, i) => {
         return (i % 2 === 0) ? num - x : num - y
       })
@@ -58,8 +66,11 @@ class Canvas extends Component {
       points: points,
       type: this.state.mode,
       physics: physics,
+      boundary: bb,
     })
     this.setState({ lines: lines, currentPoints: [] })
+
+    // if current mode is emitter, start emit
     if (this.state.mode === 'emitter') {
       this.emit.start()
     }
@@ -83,49 +94,49 @@ class Canvas extends Component {
   render() {
     return (
       <>
-        <div style={{position: 'fixed', top: '10px', width:'100%', textAlign: 'center', zIndex: 1}}>
+        <div style={{ position: 'fixed', top: '10px', width: '100%', textAlign: 'center', zIndex: 1 }}>
           <button>
             Animate
           </button>
-          <button onClick={ this.changeMode.bind(this, 'drawing') }>
+          <button onClick={this.changeMode.bind(this, 'drawing')}>
             Drawing Line
           </button>
-          <button onClick={ this.changeMode.bind(this, 'motion') }>
+          <button onClick={this.changeMode.bind(this, 'motion')}>
             Motion Line
           </button>
-          <button onClick={ this.changeMode.bind(this, 'emitter') }>
+          <button onClick={this.changeMode.bind(this, 'emitter')}>
             Emitter Line
           </button>
           <input name="isGoing" type="checkbox" checked={this.state.isPhysics} onChange={this.enablePhysics.bind(this)} />Enable Physics
         </div>
         <div style={{ display: debug ? 'block' : 'none' }}>
           <div id="physics-container"></div>
-          <Stage width={ App.size } height={ App.size }>
-            <Layer ref={ ref => (this.layer = ref) }>
+          <Stage width={App.size} height={App.size}>
+            <Layer ref={ref => (this.layer = ref)}>
               <Line
-                points={ this.state.currentPoints }
-                stroke={ 'black' }
+                points={this.state.currentPoints}
+                stroke={'black'}
               />
-              { this.state.lines.map((line, i) => {
-                  return (
-                    <Line
-                      key={ i }
-                      id={ `line-${i}` }
-                      name={ `line-${i}` }
-                      physics={ line.physics }
-                      x={ line.x }
-                      y={ line.y }
-                      radius={ line.radius }
-                      points={ line.points }
-                      stroke={ this.color(line.type) }
-                    />
-                  )
+              {this.state.lines.map((line, i) => {
+                return (
+                  <Line
+                    key={i}
+                    id={`line-${i}`}
+                    name={`line-${i}`}
+                    physics={line.physics}
+                    x={line.x}
+                    y={line.y}
+                    radius={line.radius}
+                    points={line.points}
+                    stroke={this.color(line.type)}
+                  />
+                )
               })}
               <Emit
-                canvas={ this }
+                canvas={this}
               />
               <Physics
-                canvas={ this }
+                canvas={this}
               />
             </Layer>
           </Stage>

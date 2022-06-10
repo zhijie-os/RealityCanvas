@@ -58,13 +58,12 @@ class App extends Component {
   }
 
   mouseMove(event) {
-    // alert(JSON.stringify(event.touches[0]))
     let mouse2D;
-    if(event.clientX){
-      mouse2D= { x: event.clientX, y: event.clientY }
+    if (event.clientX) {
+      mouse2D = { x: event.clientX, y: event.clientY }
     }
     else {
-      mouse2D={x:event.touches[0].clientX, y:event.touches[0].clientY}
+      mouse2D = { x: event.touches[0].clientX, y: event.touches[0].clientY }
     }
 
     // alert(JSON.stringify(event));
@@ -85,17 +84,17 @@ class App extends Component {
 
       let camera = document.getElementById('camera')
       let threeCamera = camera.getObject3D('camera')
-      
+
       this.state.raycaster.setFromCamera(screenPosition, threeCamera)
       const intersects = this.state.raycaster.intersectObject(this.mesh, true)
 
-    
+
       if (intersects.length > 0) {
         const intersect = intersects[0]
         let point = intersect.point
         let mouse = {
           x: this.size * intersect.uv.x,
-          y: this.size * (1- intersect.uv.y)
+          y: this.size * (1 - intersect.uv.y)
         }
         this.setState({ distance: intersect.distance, mouse: mouse })
         if (this.state.initDrawing) {
