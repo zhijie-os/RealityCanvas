@@ -3,6 +3,9 @@ import Physic from "./physic.js";
 import Stage from "./stage.js";
 import Konva from 'konva';
 import particle from "./particle.js";
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 export default class Canvas {
     constructor() {
         this.isPaint = false;
@@ -42,7 +45,7 @@ export default class Canvas {
                     // round cap for smoother lines
                     lineCap: 'round',
                     // add point twice, so we have some drawings even on a simple click
-                    points: [pos.x, pos.y, pos.x, pos.y],
+                    points: [pos.x, pos.y],
                 });
                 this.stage.layer.add(this.currentLine);
             }
@@ -107,10 +110,13 @@ export default class Canvas {
     }
     emit() {
         this.savedShapes.map(shape => {
+            let max = (this.currentLine.attrs.points.length) / 2;
+            let emitXIndex = (getRandomInt(max - 1)) * 2;
+            let emitYIndex = emitXIndex + 1;
             console.log(shape);
             this.physic.add_particle(new particle({
-                x: this.currentLine.attrs.points[0],
-                y: this.currentLine.attrs.points[1],
+                x: this.currentLine.attrs.points[emitXIndex],
+                y: this.currentLine.attrs.points[emitYIndex],
             }, shape));
         });
     }

@@ -50,7 +50,7 @@ export default class Physic {
             result.x = this.motion[i + 1].x - this.motion[i].x;
             result.y = this.motion[i + 1].y - this.motion[i].y;
         }
-        // console.log({result});
+        result = Matter.Vector.normalise(result);
         return result;
     }
     run() {
