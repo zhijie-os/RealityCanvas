@@ -3,20 +3,33 @@ import cv2
 
 # image
 
-# def mouseRGB(event, x, y, flags, param):
-#     if event == cv2.EVENT_LBUTTONDOWN:  # checks mouse left button down condition
-#         colorsB = image[y, x, 0]
-#         colorsG = image[y, x, 1]
-#         colorsR = image[y, x, 2]
-#         colors = image[y, x]
-#         print("Red: ", colorsR)
-#         print("Green: ", colorsG)
-#         print("Blue: ", colorsB)
-#         print("BRG Format: ", colors)
-#         print("Coordinates of pixel: X: ", x, "Y: ", y)
+
+BGRfilter = [0,0,0]
+imageFrame = None
+
+def mouseRGB(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:  # checks mouse left button down condition
+        colorsB = imageFrame[y, x, 0]
+        colorsG = imageFrame[y, x, 1]
+        colorsR = imageFrame[y, x, 2]
+        colors = imageFrame[y, x]
+        BGRfilter[0] = colorsB
+        BGRfilter[1] = colorsG
+        BGRfilter[2] = colorsR
+        
+        print("Red: ", colorsR)
+        print("Green: ", colorsG)
+        print("Blue: ", colorsB)
+        print("BRG Format: ", colors)
+        print("Coordinates of pixel: X: ", x, "Y: ", y)
+
 
 
 def main():
+
+    # use global variables 
+    global imageFrame, BGRfilter
+
     # Capturing video through webcam
     webcam = cv2.VideoCapture(0)
 
@@ -36,11 +49,11 @@ def main():
 
         # Set range for green color and
         # define mask
-        # green_lower = np.array([25, 52, 72], np.uint8)
-        # green_upper = np.array([102, 255, 255], np.uint8)
-        green_lower = np.array([63-50, 122-50, 129-50], np.uint8)
-        green_upper = np.array([63+50, 122+50, 129+50], np.uint8)
-        green_mask = cv2.inRange(hsvFrame, green_lower, green_upper)
+        # selected_lower = np.array([25, 52, 72], np.uint8)
+        # selected_upper = np.array([102, 255, 255], np.uint8)
+        selected_lower = np.array([BGRfilter[0]-30,BGRfilter[1]-30,BGRfilter[2]-30], np.uint8)
+        selected_upper = np.array([BGRfilter[0]+30,BGRfilter[1]+30,BGRfilter[2]+30], np.uint8)
+        selected_mask = cv2.inRange(hsvFrame, selected_lower, selected_upper)
 
 
         # Morphological Transform, Dilation
@@ -51,13 +64,13 @@ def main():
 
 
         # For green color
-        green_mask = cv2.dilate(green_mask, kernal)
-        res_green = cv2.bitwise_and(imageFrame, imageFrame,
-                                    mask=green_mask)
+        selected_mask = cv2.dilate(selected_mask, kernal)
+        res_selected = cv2.bitwise_and(imageFrame, imageFrame,
+                                    mask=selected_mask)
 
 
         # Creating contour to track green color
-        contours, hierarchy = cv2.findContours(green_mask,
+        contours, hierarchy = cv2.findContours(selected_mask,
                                             cv2.RETR_TREE,
                                             cv2.CHAIN_APPROX_SIMPLE)
 
@@ -69,7 +82,7 @@ def main():
                                         (x + w, y + h),
                                         (0, 255, 0), 2)
 
-                cv2.putText(imageFrame, "Green Colour", (x, y),
+                cv2.putText(imageFrame, "Colored Area", (x, y),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1.0, (0, 255, 0))
 
@@ -78,8 +91,11 @@ def main():
         projector = "color-detect"
 
         cv2.namedWindow(projector)
-        # cv2.setMouseCallback(projector, mouseRGB)
-        cv2.imshow(projector, imageFrame)
+        cv2.setMouseCallback(projector, mouseRGB)
+        if(BGRfilter[0]!=0):
+            cv2.imshow(projector, res_selected)
+        else:
+            cv2.imshow(projector, imageFrame)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             cap.release()
             cv2.destroyAllWindows()
