@@ -19,7 +19,20 @@ def mouseRGB(event, x, y, flags, param):
         print(HSVfilter)
         # hsv_value= np.uint8([[[colorsB ,colorsG,colorsR ]]])
         # hsv = cv2.cvtColor(hsv_value,cv2.COLOR_BGR2HSV)
-        
+
+def getBound():
+    global HSVfilter
+    h = HSVfilter[0]
+    s = HSVfilter[1]
+    v = HSVfilter[2]
+    
+
+    lower_bound = np.array(
+        [ h-20 if h-20>=0 else h, s-20 if s-20>=0 else s , v-20 if v-20>=0 else v], np.uint8)
+
+    upper_bound = np.array(
+        [ h+20 if h+20<=179 else h, s+20 if s+20<=255 else s , v+20 if v+20<=255 else v], np.uint8)
+    return lower_bound, upper_bound
 
 def main():
 
@@ -46,12 +59,8 @@ def main():
         # print(HSVfilter)
         # # define mask]
 
-        print(HSVfilter)
-
-        lower_bound = np.array(
-            [HSVfilter[0]-20,HSVfilter[1]-20 , HSVfilter[2]-20 ], np.uint8)
-        upper_bound = np.array(
-            [HSVfilter[0]+20,HSVfilter[1]+20 , HSVfilter[2]+20 ], np.uint8)
+        lower_bound, upper_bound = getBound()
+        
         mask = cv2.inRange(hsvFrame, lower_bound, upper_bound)
 
         # Morphological Transform, Dilation
