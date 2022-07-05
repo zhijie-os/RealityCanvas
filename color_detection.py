@@ -11,14 +11,12 @@ hsvFrame = None
 def mouseRGB(event, x, y, flags, param):
     global HSVfilter
     if event == cv2.EVENT_LBUTTONDOWN:  # checks mouse left button down condition
-        # colorsB = imageFrame[y, x, 0]
-        # colorsG = imageFrame[y, x, 1]
-        # colorsR = imageFrame[y, x, 2]
+        
         HSVfilter = hsvFrame[y, x]
-
         print(HSVfilter)
-        # hsv_value= np.uint8([[[colorsB ,colorsG,colorsR ]]])
-        # hsv = cv2.cvtColor(hsv_value,cv2.COLOR_BGR2HSV)
+    
+
+
 
 def getBound():
     global HSVfilter
@@ -33,8 +31,21 @@ def getBound():
         [ h+20 if h+20<=179 else h, s+20 if s+20<=255 else s , v+20 if v+20<=255 else v], np.uint8)
     return lower_bound, upper_bound
 
-def main():
 
+def maximumAreaContour(contours):
+        cnts = imutils.grab_contours(contours)
+        maxC = []
+        maxCArea = 0
+        for c in cnts:
+            area = cv2.contourArea(c)
+
+            if(maxCArea < area):
+                maxC = c
+                maxCArea = area
+        
+        return maxC
+
+def main():
     # use global variables
     global hsvFrame, HSVfilter
 
@@ -56,7 +67,7 @@ def main():
 
         # Set range for green color and
         # print(HSVfilter)
-        # # define mask]
+        # define mask
 
         lower_bound, upper_bound = getBound()
         
@@ -78,15 +89,8 @@ def main():
                                                cv2.RETR_TREE,
                                                cv2.CHAIN_APPROX_SIMPLE)
 
-        cnts = imutils.grab_contours(contours)
-        maxC = []
-        maxCArea = 0
-        for c in cnts:
-            area = cv2.contourArea(c)
-
-            if(maxCArea < area):
-                maxC = c
-                maxCArea = area
+        
+        maxC = maximumAreaContour(contours)
 
         if len(maxC) > 0 :
             cv2.drawContours(imageFrame, [maxC], -1, (0, 255, 0), 3)
@@ -99,17 +103,6 @@ def main():
 
                 cv2.circle(imageFrame, (cx, cy), 7, (255, 255, 255), -1)
 
-        # for pic, contour in enumerate(contours):
-        #     area = cv2.contourArea(contour)
-        #     if(area > 300):
-        #         x, y, w, h = cv2.boundingRect(contour)
-        #         imageFrame = cv2.rectangle(imageFrame, (x, y),
-        #                                 (x + w, y + h),
-        #                                 (0, 255, 0), 2)
-
-        #         cv2.putText(imageFrame, "Colored Area", (x, y),
-        #                     cv2.FONT_HERSHEY_SIMPLEX,
-        #                     1.0, (0, 255, 0))
 
         # Program Termination
         projector = "color-detect"
@@ -124,6 +117,9 @@ def main():
             cap.release()
             cv2.destroyAllWindows()
             break
+
+
+
 
 
 if __name__ == "__main__":
