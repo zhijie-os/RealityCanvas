@@ -1,34 +1,30 @@
 import numpy as np
 import cv2
-import imutils
+# import imutils
 # image
 
 
-BGRfilter = [0, 0, 0]
-imageFrame = None
+HSVfilter = [0,0,0]
+hsvFrame = None
 
 
 def mouseRGB(event, x, y, flags, param):
+    global HSVfilter
     if event == cv2.EVENT_LBUTTONDOWN:  # checks mouse left button down condition
-        colorsB = imageFrame[y, x, 0]
-        colorsG = imageFrame[y, x, 1]
-        colorsR = imageFrame[y, x, 2]
-        colors = imageFrame[y, x]
-        BGRfilter[0] = colorsB
-        BGRfilter[1] = colorsG
-        BGRfilter[2] = colorsR
+        # colorsB = imageFrame[y, x, 0]
+        # colorsG = imageFrame[y, x, 1]
+        # colorsR = imageFrame[y, x, 2]
+        HSVfilter = hsvFrame[y, x]
 
-        print("Red: ", colorsR)
-        print("Green: ", colorsG)
-        print("Blue: ", colorsB)
-        print("BRG Format: ", colors)
-        print("Coordinates of pixel: X: ", x, "Y: ", y)
-
+        print(HSVfilter)
+        # hsv_value= np.uint8([[[colorsB ,colorsG,colorsR ]]])
+        # hsv = cv2.cvtColor(hsv_value,cv2.COLOR_BGR2HSV)
+        
 
 def main():
 
     # use global variables
-    global imageFrame, BGRfilter
+    global hsvFrame, HSVfilter
 
     # Capturing video through webcam
     webcam = cv2.VideoCapture(0)
@@ -47,15 +43,15 @@ def main():
         hsvFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2HSV)
 
         # Set range for green color and
-        print(BGRfilter)
+        # print(HSVfilter)
         # # define mask]
 
-        # lower_bound = np.array([63-50, 122-50, 129-50], np.uint8)
-        # upper_bound = np.array([63+50, 122+50, 129+50], np.uint8)
+        print(HSVfilter)
+
         lower_bound = np.array(
-            [BGRfilter[0]-50, BGRfilter[1]-50, BGRfilter[2]-50], np.uint8)
+            [HSVfilter[0]-20,HSVfilter[1]-20 , HSVfilter[2]-20 ], np.uint8)
         upper_bound = np.array(
-            [BGRfilter[0]+50, BGRfilter[1]+50, BGRfilter[2]+50], np.uint8)
+            [HSVfilter[0]+20,HSVfilter[1]+20 , HSVfilter[2]+20 ], np.uint8)
         mask = cv2.inRange(hsvFrame, lower_bound, upper_bound)
 
         # Morphological Transform, Dilation
@@ -112,7 +108,7 @@ def main():
 
         cv2.namedWindow(projector)
         cv2.setMouseCallback(projector, mouseRGB)
-        if(BGRfilter[0] != 0):
+        if(HSVfilter[0] != 0):
             cv2.imshow(projector, imageFrame)
         else:
             cv2.imshow(projector, imageFrame)
