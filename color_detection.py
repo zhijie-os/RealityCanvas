@@ -1,11 +1,12 @@
 import numpy as np
 import cv2
-
+import imutils
 # image
 
 
-BGRfilter = [0,0,0]
+BGRfilter = [0, 0, 0]
 imageFrame = None
+
 
 def mouseRGB(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:  # checks mouse left button down condition
@@ -16,7 +17,7 @@ def mouseRGB(event, x, y, flags, param):
         BGRfilter[0] = colorsB
         BGRfilter[1] = colorsG
         BGRfilter[2] = colorsR
-        
+
         print("Red: ", colorsR)
         print("Green: ", colorsG)
         print("Blue: ", colorsB)
@@ -24,10 +25,9 @@ def mouseRGB(event, x, y, flags, param):
         print("Coordinates of pixel: X: ", x, "Y: ", y)
 
 
-
 def main():
 
-    # use global variables 
+    # use global variables
     global imageFrame, BGRfilter
 
     # Capturing video through webcam
@@ -46,15 +46,17 @@ def main():
         # color space
         hsvFrame = cv2.cvtColor(imageFrame, cv2.COLOR_BGR2HSV)
 
-
         # Set range for green color and
-        # define mask
-        # selected_lower = np.array([25, 52, 72], np.uint8)
-        # selected_upper = np.array([102, 255, 255], np.uint8)
-        selected_lower = np.array([BGRfilter[0]-30,BGRfilter[1]-30,BGRfilter[2]-30], np.uint8)
-        selected_upper = np.array([BGRfilter[0]+30,BGRfilter[1]+30,BGRfilter[2]+30], np.uint8)
-        selected_mask = cv2.inRange(hsvFrame, selected_lower, selected_upper)
+        print(BGRfilter)
+        # # define mask]
 
+        # lower_bound = np.array([63-50, 122-50, 129-50], np.uint8)
+        # upper_bound = np.array([63+50, 122+50, 129+50], np.uint8)
+        lower_bound = np.array(
+            [BGRfilter[0]-50, BGRfilter[1]-50, BGRfilter[2]-50], np.uint8)
+        upper_bound = np.array(
+            [BGRfilter[0]+50, BGRfilter[1]+50, BGRfilter[2]+50], np.uint8)
+        mask = cv2.inRange(hsvFrame, lower_bound, upper_bound)
 
         # Morphological Transform, Dilation
         # for each color and bitwise_and operator
@@ -62,17 +64,36 @@ def main():
         # to detect only that particular color
         kernal = np.ones((5, 5), "uint8")
 
-
         # For green color
-        selected_mask = cv2.dilate(selected_mask, kernal)
-        res_selected = cv2.bitwise_and(imageFrame, imageFrame,
-                                    mask=selected_mask)
-
+        mask = cv2.dilate(mask, kernal)
+        resFrame = cv2.bitwise_and(imageFrame, imageFrame,
+                                       mask=mask)
 
         # Creating contour to track green color
-        contours, hierarchy = cv2.findContours(selected_mask,
-                                            cv2.RETR_TREE,
-                                            cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(mask,
+                                               cv2.RETR_TREE,
+                                               cv2.CHAIN_APPROX_SIMPLE)
+
+        # cnts = imutils.grab_contours(contours)
+
+        # maxC = 0
+        # maxCArea = 0
+        # for c in cnts:
+        #     area = cv2.contourArea(c)
+
+        #     if(maxCArea < area):
+        #         maxC = c
+        #         maxCArea = area
+
+        # cv2.drawContours(imageFrame, [maxC], -1, (0, 255, 0), 3)
+
+        # M = cv2.moments(maxC)
+
+        # if M['m00'] != 0:
+        #     cx = int(M['m10']/M['m00'])
+        #     cy = int(M['m01']/M['m00'])
+
+        #     cv2.circle(imageFrame, (cx, cy), 7, (255, 255, 255), -1)
 
         for pic, contour in enumerate(contours):
             area = cv2.contourArea(contour)
@@ -86,14 +107,13 @@ def main():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1.0, (0, 255, 0))
 
-
         # Program Termination
         projector = "color-detect"
 
         cv2.namedWindow(projector)
         cv2.setMouseCallback(projector, mouseRGB)
-        if(BGRfilter[0]!=0):
-            cv2.imshow(projector, res_selected)
+        if(BGRfilter[0] != 0):
+            cv2.imshow(projector, imageFrame)
         else:
             cv2.imshow(projector, imageFrame)
         if cv2.waitKey(10) & 0xFF == ord('q'):
