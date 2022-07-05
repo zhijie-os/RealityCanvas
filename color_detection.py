@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-# import imutils
+import imutils
 # image
 
 
@@ -26,7 +26,6 @@ def getBound():
     s = HSVfilter[1]
     v = HSVfilter[2]
     
-
     lower_bound = np.array(
         [ h-20 if h-20>=0 else h, s-20 if s-20>=0 else s , v-20 if v-20>=0 else v], np.uint8)
 
@@ -75,42 +74,42 @@ def main():
                                        mask=mask)
 
         # Creating contour to track green color
-        contours, hierarchy = cv2.findContours(mask,
+        contours = cv2.findContours(mask,
                                                cv2.RETR_TREE,
                                                cv2.CHAIN_APPROX_SIMPLE)
 
-        # cnts = imutils.grab_contours(contours)
+        cnts = imutils.grab_contours(contours)
+        maxC = []
+        maxCArea = 0
+        for c in cnts:
+            area = cv2.contourArea(c)
 
-        # maxC = 0
-        # maxCArea = 0
-        # for c in cnts:
-        #     area = cv2.contourArea(c)
+            if(maxCArea < area):
+                maxC = c
+                maxCArea = area
 
-        #     if(maxCArea < area):
-        #         maxC = c
-        #         maxCArea = area
+        if len(maxC) > 0 :
+            cv2.drawContours(imageFrame, [maxC], -1, (0, 255, 0), 3)
 
-        # cv2.drawContours(imageFrame, [maxC], -1, (0, 255, 0), 3)
+            M = cv2.moments(maxC)
 
-        # M = cv2.moments(maxC)
+            if M['m00'] != 0:
+                cx = int(M['m10']/M['m00'])
+                cy = int(M['m01']/M['m00'])
 
-        # if M['m00'] != 0:
-        #     cx = int(M['m10']/M['m00'])
-        #     cy = int(M['m01']/M['m00'])
+                cv2.circle(imageFrame, (cx, cy), 7, (255, 255, 255), -1)
 
-        #     cv2.circle(imageFrame, (cx, cy), 7, (255, 255, 255), -1)
+        # for pic, contour in enumerate(contours):
+        #     area = cv2.contourArea(contour)
+        #     if(area > 300):
+        #         x, y, w, h = cv2.boundingRect(contour)
+        #         imageFrame = cv2.rectangle(imageFrame, (x, y),
+        #                                 (x + w, y + h),
+        #                                 (0, 255, 0), 2)
 
-        for pic, contour in enumerate(contours):
-            area = cv2.contourArea(contour)
-            if(area > 300):
-                x, y, w, h = cv2.boundingRect(contour)
-                imageFrame = cv2.rectangle(imageFrame, (x, y),
-                                        (x + w, y + h),
-                                        (0, 255, 0), 2)
-
-                cv2.putText(imageFrame, "Colored Area", (x, y),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1.0, (0, 255, 0))
+        #         cv2.putText(imageFrame, "Colored Area", (x, y),
+        #                     cv2.FONT_HERSHEY_SIMPLEX,
+        #                     1.0, (0, 255, 0))
 
         # Program Termination
         projector = "color-detect"
