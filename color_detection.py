@@ -79,7 +79,6 @@ def main():
         # to detect only that particular color
         kernal = np.ones((5, 5), "uint8")
 
-        # For green color
         mask = cv2.dilate(mask, kernal)
         resFrame = cv2.bitwise_and(imageFrame, imageFrame,
                                        mask=mask)
@@ -110,7 +109,7 @@ def main():
         cv2.namedWindow(projector)
         cv2.setMouseCallback(projector, mouseRGB)
         if(HSVfilter[0] != 0):
-            cv2.imshow(projector, imageFrame)
+            cv2.imshow(projector, resFrame)
         else:
             cv2.imshow(projector, imageFrame)
         if cv2.waitKey(10) & 0xFF == ord('q'):
